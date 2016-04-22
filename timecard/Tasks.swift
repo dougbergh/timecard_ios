@@ -12,6 +12,8 @@ class Tasks {
     
     var sheetService: SheetServiceProtocol!
     
+    var debugCount = 0
+    
     func setSheetService(svc:SheetServiceProtocol) {
         sheetService = svc
     }
@@ -100,11 +102,17 @@ class Tasks {
             let task = finishedTasks[0]
             
             if !Clock.sameDay(task.startTime,date2: NSDate()) {
+            
+//            if debugCount > 59 {
+                
+                debugCount = 0
                 
                 // bingo, there are tasks to save
                 let tasksToSave = getTasksInInterval(task.startTime, end: Clock.dayEnd(task.startTime))
                 
                 saveTasks(tasksToSave)
+            } else {
+                debugCount += 1
             }
         }
     }
@@ -148,6 +156,16 @@ class Tasks {
     // 1st pass: do nothing
     //
     func correctOvernightTask() {
+    }
+    
+    func getAllNames() -> [String] {
+        var tasks = [String]()
+        for task in finishedTasks {
+            if task.desc != nil {
+                tasks.append(task.desc!)
+            }
+        }
+        return tasks
     }
 }
 

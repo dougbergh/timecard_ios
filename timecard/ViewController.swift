@@ -8,7 +8,11 @@
     
     import UIKit
     
-    class ViewController: UIViewController, ClockDelegate {
+    protocol StartDelegate {
+        func confirmStartTask(name:String)
+    }
+    
+    class ViewController: UIViewController, ClockDelegate, StartDelegate {
         
         // view
 
@@ -68,13 +72,6 @@
             }
         }
         
-//        var autocompleteTableView: UITableView = UITableView(frame:CGRectMake(0, 80, 320, 120))
-//        autocompleteTableView.delegate = self
-//        autocompleteTableView.dataSource = self
-//        autocompleteTableView.scrollEnabled = true;
-//        autocompleteTableView.hidden = true
-//        [self.view addSubview:autocompleteTableView];
-
         override func viewDidLoad() {
             super.viewDidLoad()
             
@@ -116,7 +113,6 @@
         }
 
         // When the view appears, ensure that the Google Apps Script Execution API service is authorized
-        // and perform API calls
         override func viewDidAppear(animated: Bool) {
             
             if sheetService.canAuth() {
@@ -126,29 +122,65 @@
             }
         }
         
-        
         //=================================================================================================
         
         
         //
         // Start a new task
         //
-        @IBAction func startTaskOnTouch(sender: UIButton) {
+//        @IBAction func startTaskOnTouch(sender: UIButton) {
+//            
+//            let menu = UIAlertController(title: nil, message: "Task Description", preferredStyle: UIAlertControllerStyle.Alert)
+//            
+//            menu.addTextFieldWithConfigurationHandler(configurationTextField)
+//            
+//            menu.addAction(UIAlertAction(title: "OK", style: .Default , handler: { (UIAlertAction)in
+//                let date = NSDate()
+//                self.setActiveTaskInModel(date, desc: menu.textFields![0].text)
+//                self.setActiveTaskInView(date)
+//            }))
+//            self.presentViewController(menu, animated: true, completion: nil)
+//        }
+//        func configurationTextField(textField: UITextField!) {
+//            textField.text = ""
+//        }
+        
+        //
+        // Start a new task
+        //
+//        @IBAction func startTaskOnTouch(sender: UIButton) {
+//            
+//            
+//            let alert = StartViewController()
+//            alert.delegate = self
+//            alert.choices = tasks.getAllNames()
+//            
+////            performSegueWithIdentifier("startSegue",sender:sender)
+//            self.presentViewController(alert, animated: true, completion: nil)
+//        }
+        
+        override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
             
-            let menu = UIAlertController(title: nil, message: "Task Description", preferredStyle: UIAlertControllerStyle.Alert)
+            let destVC = segue.destinationViewController as! StartViewController
+            destVC.delegate = self
+            destVC.choices = tasks.getAllNames()
             
-            menu.addTextFieldWithConfigurationHandler(configurationTextField)
-            
-            menu.addAction(UIAlertAction(title: "OK", style: .Default , handler: { (UIAlertAction)in
-                let date = NSDate()
-                self.setActiveTaskInModel(date, desc: menu.textFields![0].text)
-                self.setActiveTaskInView(sender, startTime: date)
-            }))
-//            menu.addSubView( autocomleteTableView )
-            self.presentViewController(menu, animated: true, completion: nil)
+//            guard let segueId = segue.identifier else { return }
+//            
+//            switch segueId {
+//            case "startSegue":
+//                let destVC = segue.destinationViewController as! StartViewController
+//                destVC.delegate = self
+//                break
+//            default:
+//                break
+//            }
         }
-        func configurationTextField(textField: UITextField!) {
-            textField.text = ""
+
+        func confirmStartTask( name:String ) {
+            let date = NSDate()
+            self.setActiveTaskInModel(date, desc: name)
+            self.setActiveTaskInView(date)
         }
         
         //
@@ -156,7 +188,7 @@
         //
         @IBAction func stopTaskOnTouch(sender: UIButton) {
             
-            let menu = UIAlertController(title: nil, message: "Update Task Description", preferredStyle: UIAlertControllerStyle.Alert)
+            let menu = UIAlertController(title: nil, message: "Confirm Task Description", preferredStyle: UIAlertControllerStyle.Alert)
             
             menu.addTextFieldWithConfigurationHandler(stopConfigurationTextField)
             
@@ -171,13 +203,13 @@
             textField.text = self.tasks.currentlyActiveTask!.desc
         }
         
-        func setActiveTaskInView(sender:UIButton, startTime: NSDate) {
+        func setActiveTaskInView(startTime: NSDate) {
             
             drawBlackBorder(activeTaskView)
             activeTaskView.hidden = false
             activeTaskLabel.text = tasks.currentlyActiveTask!.desc
             activeTaskStartTimeLabel.text = Clock.getTimeString(startTime)
-            sender.hidden = true
+            startButton.hidden = true
             stopButton.hidden = false
         }
         

@@ -1,37 +1,51 @@
 {
-  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "9F7714242FB424A50B6B3CA315EAD89D55B1BF49",
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "9F7714242FB424A50B6B3CA315EAD89D55B1BF49+++5D5C014",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
 
   },
   "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
-    "9F7714242FB424A50B6B3CA315EAD89D55B1BF49" : 0,
-    "9D01D5BCCDE322646FEB1945347C3CF4E96976E3" : 0,
-    "D58DF7C3E72198199D1B65DDDAADD2A7790F9A98" : 0
+    "9D01D5BCCDE322646FEB1945347C3CF4E96976E3+++90B17A6" : 0,
+    "9F7714242FB424A50B6B3CA315EAD89D55B1BF49+++C8C68E6" : 0,
+    "9F7714242FB424A50B6B3CA315EAD89D55B1BF49+++5D5C014" : 0,
+    "D58DF7C3E72198199D1B65DDDAADD2A7790F9A98+++622D998" : 0,
+    "9F7714242FB424A50B6B3CA315EAD89D55B1BF49+++99FC179" : 0
   },
   "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "AFAC0231-FAEA-40DE-A45E-3A87FCDB9CCA",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
-    "9F7714242FB424A50B6B3CA315EAD89D55B1BF49" : "GitHub\/",
-    "9D01D5BCCDE322646FEB1945347C3CF4E96976E3" : "GitHub\/google-api-objectivec-client\/Deps\/gtm-oauth2\/",
-    "D58DF7C3E72198199D1B65DDDAADD2A7790F9A98" : "GitHub\/google-api-objectivec-client\/"
+    "9D01D5BCCDE322646FEB1945347C3CF4E96976E3+++90B17A6" : "google-api-objectivec-client\/Deps\/gtm-oauth2\/",
+    "9F7714242FB424A50B6B3CA315EAD89D55B1BF49+++C8C68E6" : "",
+    "9F7714242FB424A50B6B3CA315EAD89D55B1BF49+++5D5C014" : "timecard_ios\/",
+    "D58DF7C3E72198199D1B65DDDAADD2A7790F9A98+++622D998" : "google-api-objectivec-client\/",
+    "9F7714242FB424A50B6B3CA315EAD89D55B1BF49+++99FC179" : ""
   },
   "DVTSourceControlWorkspaceBlueprintNameKey" : "timecard",
   "DVTSourceControlWorkspaceBlueprintVersion" : 204,
-  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "timecard_ios\/timecard.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "timecard.xcworkspace",
   "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
     {
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/google\/gtm-oauth2.git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
-      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9D01D5BCCDE322646FEB1945347C3CF4E96976E3"
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9D01D5BCCDE322646FEB1945347C3CF4E96976E3+++90B17A6"
     },
     {
-      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/dougbergh\/interop-test.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/dougbergh\/timecard_ios.git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
-      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9F7714242FB424A50B6B3CA315EAD89D55B1BF49"
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9F7714242FB424A50B6B3CA315EAD89D55B1BF49+++5D5C014"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/dougbergh\/timecard_ios.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9F7714242FB424A50B6B3CA315EAD89D55B1BF49+++99FC179"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/dougbergh\/timecard_ios.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9F7714242FB424A50B6B3CA315EAD89D55B1BF49+++C8C68E6"
     },
     {
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/google\/google-api-objectivec-client.git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
-      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D58DF7C3E72198199D1B65DDDAADD2A7790F9A98"
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D58DF7C3E72198199D1B65DDDAADD2A7790F9A98+++622D998"
     }
   ]
 }
