@@ -20,10 +20,9 @@ class Tasks {
     
     var currentlyActiveTask: Task?
     
-    // Tasks that have been finished - some have been saved, some have not
-    var finishedTasks = [Task]()
-    
-//    var taskHistory = [(NSDate,[Task])]()
+    var finishedTasks = [Task]()    // Tasks that have been finished but not reported
+    var reportingTasks = [Task]()   // Tasks in the process of being reported
+    var reportedTasks = [Task]()    // Tasks that have been finished and reported
     
     func taskStarted( task: Task ) {
         currentlyActiveTask = task
@@ -42,28 +41,60 @@ class Tasks {
         }
     }
     
-    func totalDurationToday() -> NSTimeInterval {
-        let start = Clock.dayStart(NSDate())
-        return totalDurationInterval(start, end: NSDate())
-    }
-    
     //
-    // Return an array of all tasks that started during the interval bounded by start & end
+    // Return an array of all tasks that have not been reported and that
+    // started during the interval bounded by start & end
     //
-    func getTasksInInterval(start:NSDate,end:NSDate) -> [Task] {
-        var tasks = [Task]()
-        for task in finishedTasks {
+    func getTasksInInterval(source:[Task],start:NSDate,end:NSDate) -> [Task] {
+        var ret = [Task]()
+        for task in source {
             if task.startTime.timeIntervalSinceDate(start) >= 0 && end.timeIntervalSinceDate(task.startTime) > 0 {
-                tasks.append(task)
+                ret.append(task)
             }
         }
-        return tasks
+        return ret
     }
     
+    //
+    // Remove all tasks in the interval from the finishedTasks array
+    // (note: in swift, parameters are immutable so we can't pass the array
+    // from which to remove the tasks as a parameter)
+    func removeTasksInInterval( start:NSDate, end:NSDate ) -> [Task] {
+        
+        var ret:[Task] = [Task]()
+        
+        while finishedTasks.isEmpty == false {
+            let task = finishedTasks[0]
+            if task.startTime.timeIntervalSinceDate(start) >= 0 && end.timeIntervalSinceDate(task.startTime) > 0 {
+                ret.append(finishedTasks.removeFirst())
+            } else { break }
+        }
+        
+        return ret
+    }
+    
+    func insertToFrontOfFinished(tasksToInsert:[Task]) {
+        let temp = finishedTasks
+        finishedTasks.removeAll()
+        finishedTasks += tasksToInsert
+        finishedTasks += temp
+    }
+    
+    //
+    // Return the total amount of time in all tasks, independent of state
+    //
     func totalDurationInterval(start:NSDate,end:NSDate) -> NSTimeInterval {
 
         var total: NSTimeInterval = 0
-        let tasks = getTasksInInterval(start,end: end)
+        var tasks = getTasksInInterval(reportedTasks,start: start,end: end)
+        for task in tasks {
+            total += task.duration
+        }
+        tasks = getTasksInInterval(reportingTasks,start: start,end: end)
+        for task in tasks {
+            total += task.duration
+        }
+        tasks = getTasksInInterval(finishedTasks,start: start,end: end)
         for task in tasks {
             total += task.duration
         }
@@ -76,6 +107,11 @@ class Tasks {
         return total
     }
     
+    func totalDurationToday() -> NSTimeInterval {
+        let start = Clock.dayStart(NSDate())
+        return totalDurationInterval(start, end: NSDate())
+    }
+    
     func totalDurationTodayAsString() -> String? {
         return Clock.getDurationString(totalDurationToday())
     }
@@ -85,8 +121,21 @@ class Tasks {
     }
     
     //
-    // Called onV
+    // Determine whether there are tasks that need to be reported, 
+    // i.e. it's a new day
+    //
     func checkForDailyActivity() {
+        
+        // nothing to do
+        if  finishedTasks.isEmpty == true {
+            return
+        }
+        
+        // request outstanding
+        if ( reportingTasks.isEmpty == false ) {
+            print("request outstanding; not saving")
+            return
+        }
         
         let now = NSDate()
         
@@ -96,27 +145,26 @@ class Tasks {
             correctOvernightTask()
         }
         
-        // check for tasks from a previous day that need to be saved (this is the first run of a new day)
-        if  finishedTasks.isEmpty == false {
+        // check for tasks from a previous day that need to be saved
+        let task = finishedTasks[0]
+        if Clock.sameDay(task.startTime, date2: now) == false {
+//        if true {      // XXX for debugging
+        
+            // save one prior day's tasks (if the app hasn't run for a couple days,
+            // it will take a couple iterations to catch up to the present)
+            let end = Clock.dayEnd(task.startTime)
+            let tasksToSave = removeTasksInInterval(task.startTime, end: end)
             
-            let task = finishedTasks[0]
-            
-            if !Clock.sameDay(task.startTime,date2: NSDate()) {
-            
-//            if debugCount > 59 {
+            // note that we have a request outstanding.
+            if tasksToSave.isEmpty == false {
+                reportingTasks += tasksToSave
                 
-                debugCount = 0
-                
-                // bingo, there are tasks to save
-                let tasksToSave = getTasksInInterval(task.startTime, end: Clock.dayEnd(task.startTime))
-                
+                // ...and save!
                 saveTasks(tasksToSave)
-            } else {
-                debugCount += 1
             }
         }
     }
-    
+
     func saveTasks(tasksToSave:[Task]) {
         var date:NSDate?
         var total: NSTimeInterval = 0
@@ -130,8 +178,19 @@ class Tasks {
         if date != nil {
             taskNamesArray = dedup(taskNamesArray)
             let taskNames = taskNamesArray.joinWithSeparator(",")
+            sheetService.setTasksDelegate(self)
             sheetService.save(date!,total: total,taskNames: taskNames)
         }
+    }
+    
+    func saveComplete( succeeded:Bool ) {
+        if succeeded {
+            reportedTasks += reportingTasks
+        } else {
+            // Put 'em back, try again in a second
+            insertToFrontOfFinished(reportingTasks)
+        }
+        reportingTasks.removeAll()
     }
     
     func dedup(tasks:[String]) -> [String] {
@@ -165,7 +224,7 @@ class Tasks {
                 tasks.append(task.desc!)
             }
         }
-        return tasks
+        return dedup(tasks)
     }
 }
 

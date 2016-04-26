@@ -36,13 +36,6 @@
         
         // Google API
         private let kKeychainItemName = "Google Apps Script Execution API"
-//        private let kClientID = "372245564407-c58g1pbe0chkqpdl66v4non1hrike30f.apps.googleusercontent.com"
-//        private let kScriptId = "M4TjLR3wP6pwa1L50fZMY1PnnEaOUkRCL"
-//        private let kClientID = "876244791287-vhcspc4sf6ahlp26v0focp5gj2aij51v.apps.googleusercontent.com"
-//        private let kScriptId = "MZq2EboWEHbZs7vcYvh55GPnnEaOUkRCL"
-        
-//        private let kScriptId = "M4KHtVf505JzlVOQwz3EOnUbOSAplbjFt"
-        
         // =====
         private let kClientID = "970084832900-q2tn9dfqfv31l93ehfj0vbkvmpteibf9.apps.googleusercontent.com"
         private let kScriptId = "MYk98rtcC6ioYF8bKxS5alPnnEaOUkRCL"
@@ -76,9 +69,6 @@
             super.viewDidLoad()
             
             sheetService.viewDidLoad()
-            
-            //                    bgImage.image = UIImage(named: "bgImage")
-            //                    bgImage.alpha = 0.1
             
             if clock == nil { clock = Clock(clockDelegate: self) }
             
@@ -126,7 +116,7 @@
         
         
         //
-        // Start a new task
+        // Start a new task - with AlertAction to enter name
         //
 //        @IBAction func startTaskOnTouch(sender: UIButton) {
 //            
@@ -146,37 +136,20 @@
 //        }
         
         //
-        // Start a new task
+        // User has pressed the Start button. The system creates a segue to the StartViewController
+        // to allow the user to enter the task's name (or select from past tasks).
+        // Here, we prep the StartViewController with the necessary context.
         //
-//        @IBAction func startTaskOnTouch(sender: UIButton) {
-//            
-//            
-//            let alert = StartViewController()
-//            alert.delegate = self
-//            alert.choices = tasks.getAllNames()
-//            
-////            performSegueWithIdentifier("startSegue",sender:sender)
-//            self.presentViewController(alert, animated: true, completion: nil)
-//        }
-        
         override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
             
             let destVC = segue.destinationViewController as! StartViewController
             destVC.delegate = self
             destVC.choices = tasks.getAllNames()
-            
-//            guard let segueId = segue.identifier else { return }
-//            
-//            switch segueId {
-//            case "startSegue":
-//                let destVC = segue.destinationViewController as! StartViewController
-//                destVC.delegate = self
-//                break
-//            default:
-//                break
-//            }
         }
 
+        //
+        // The user has completed entering a task name in the StartViewController
+        //
         func confirmStartTask( name:String ) {
             let date = NSDate()
             self.setActiveTaskInModel(date, desc: name)

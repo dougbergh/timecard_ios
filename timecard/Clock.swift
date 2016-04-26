@@ -139,4 +139,26 @@ extension Clock {
 
         return components1.day == components2.day
     }
+    
+    static func sameMinute( date1:NSDate, date2:NSDate ) -> Bool {
+        let cal = NSCalendar.currentCalendar()
+        let components1 = cal.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: date1)
+        let components2 = cal.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: date2)
+        
+        return components1.minute == components2.minute
+    }
+    
+    static func moreThanOneDayOld( date1:NSDate, date2:NSDate ) -> Bool {
+        
+        let oneDay : NSTimeInterval = 60*60*24
+
+        let diff = date2.timeIntervalSinceDate(date1)
+        
+        return diff > oneDay
+    }
+    
+    static func dayEndYesterday( date:NSDate ) -> NSDate {
+        let yesterday = date.dateByAddingTimeInterval(-60*60*24)
+        return dayEnd(yesterday)
+    }
 }

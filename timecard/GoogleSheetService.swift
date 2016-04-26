@@ -10,6 +10,7 @@ import Foundation
 
 protocol SheetServiceProtocol {
     func save(date:NSDate,total:NSTimeInterval,taskNames:String)
+    func setTasksDelegate( delegate:Tasks )
 }
 
 class GoogleSheetService : NSObject, SheetServiceProtocol {
@@ -25,10 +26,10 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
     // resetting the iOS simulator or uninstall the app.
     private let scopes = ["https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/spreadsheets"]
     let service = GTLService()
-    let output = UITextView()
     
-    // When the view loads, create necessary subviews
-    // and initialize the Google Apps Script Execution API service
+    var tasksDelegate: Tasks?
+    
+    // When the parent view loads, initialize the Google Apps Script Execution API service
     func viewDidLoad() {
         
         if let auth = GTMOAuth2ViewControllerTouch.authForGoogleFromKeychainForName(
@@ -51,12 +52,23 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
         }
     }
     
+    func setTasksDelegate( delegate:Tasks ) {
+        tasksDelegate = delegate
+    }
+    
     //=================================================================================================
     
     // Google API
     
     func save(date:NSDate,total:NSTimeInterval,taskNames:String) {
         let fmt = NSDateFormatter()
+        fmt.dateStyle = NSDateFormatterStyle.LongStyle
+        let dateString = fmt.stringFromDate(date)
+        let dateArray = dateString.characters.split(" ")
+        let month = String(dateArray[0])
+        let year = String(dateArray[2])
+        let filename = "\(month) \(year)"
+        
         fmt.dateStyle = NSDateFormatterStyle.ShortStyle
         
         let baseUrl = "https://script.googleapis.com/v1/scripts/\(kScriptId):run"
@@ -64,8 +76,8 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
         
         // Create an execution request object.
         let request = GTLObject()
-        request.setJSONValue("appendRowToApril", forKey: "function")
-        request.setJSONValue("\(fmt.stringFromDate(date)) \(Clock.getDurationString(total)!) \(taskNames)", forKey: "parameters")
+        request.setJSONValue("appendRowToMonthly", forKey: "function")
+        request.setJSONValue("\(filename)|\(fmt.stringFromDate(date))|\(Clock.getDurationString(total)!)|\(taskNames)", forKey: "parameters")
         
         // Make the API request.
         service.fetchObjectByInsertingObject(request,
@@ -78,14 +90,16 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
     @objc func displayResultWithTicket(ticket: GTLServiceTicket,
                                         finishedWithObject object : GTLObject,
                                                            error : NSError?) {
+        
+        var success = true
+        
         if let error = error {
             // The API encountered a problem before the script started executing.
             print(("The API returned the error: ",
                       message: error.localizedDescription))
-            return
-        }
-        
-        if let apiError = object.JSON["error"] as? [String: AnyObject] {
+            success = false
+
+         } else if let apiError = object.JSON["error"] as? [String: AnyObject] {
             // The API executed, but the script returned an error.
             
             // Extract the first (and only) set of error details and cast as
@@ -110,6 +124,8 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
             
             // Set the output as the compiled error message.
             print(errMessage)
+            
+            success = false
         } else {
             // no error? don't want no stinking output
             // The result provided by the API needs to be cast into the
@@ -119,5 +135,7 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
 //                output.text = response.description
 //            }
         }
+        
+        tasksDelegate?.saveComplete(success)
     }
 }
