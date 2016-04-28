@@ -39,8 +39,21 @@ class Clock {
 }
 
 extension Clock {
-    static func getTimeString(date:NSDate) -> String {
-        return NSDateFormatter.localizedStringFromDate(date, dateStyle: .NoStyle, timeStyle: .ShortStyle)
+    
+    //
+    // Return the full date & time as a string (suitable for saving in persistent store)
+    //
+    static func getDateString(date:NSDate?) -> String {
+        if date == nil { return "" }
+        return NSDateFormatter.localizedStringFromDate(date!, dateStyle: .ShortStyle, timeStyle: .MediumStyle)
+    }
+    
+    //
+    // Return just the time (without the date) as a string (suitable for displaying on the UI)
+    //
+    static func getTimeString(date:NSDate?) -> String {
+        if date == nil { return "" }
+        return NSDateFormatter.localizedStringFromDate(date!, dateStyle: .NoStyle, timeStyle: .ShortStyle)
     }
     // This is the 'correct' way to do this, but I can't make it work
 //    static func getDurationString(start:NSDate, stop:NSDate) -> String? {
@@ -57,6 +70,17 @@ extension Clock {
 //        let str = formatter.stringFromTimeInterval(interval)
 //        return str
 //    }
+    
+    //
+    // Return an NSDate given the input. Assumes the input was created with the 
+    // getDateString() function above, which uses dateStyle.ShortStyle and timeStyle.MediumStyle
+    //
+    static func dateFromString(input:String) -> NSDate {
+        let fmt = NSDateFormatter()
+        fmt.dateStyle = .ShortStyle
+        fmt.timeStyle = .MediumStyle
+        return fmt.dateFromString(input)!
+    }
     
     static func getDurationString(start:NSDate, stop:NSDate) -> String? {
         let interval = stop.timeIntervalSinceDate(start)

@@ -24,8 +24,26 @@ class Tasks {
     var reportingTasks = [Task]()   // Tasks in the process of being reported
     var reportedTasks = [Task]()    // Tasks that have been finished and reported
     
+    let persistentStore = NSUserDefaults.standardUserDefaults()
+    let persistentStoreKey = "timecardFinishedTasks"
+    
+    //
+    // The app is starting, this object is initializing. Reset state from persistent store
+    //
+    func viewDidLoad() {
+        
+        if let values = persistentStore.objectForKey(persistentStoreKey) {
+            let strings = values as! [String]
+            for json in strings {
+                let task = Task(input: json)
+                finishedTasks.append(task)
+            }
+        }
+    }
+    
     func taskStarted( task: Task ) {
         currentlyActiveTask = task
+//        persistentStore.setObject(task.jsonString(), forKey: task.key())
     }
     
     func taskCanceled( task: Task ) {
@@ -38,6 +56,10 @@ class Tasks {
             task!.endTime = time
             finishedTasks.append(task!)
             currentlyActiveTask = nil
+            
+            // the persistent value has to be replaced 'cause it had no end time
+            persistentStore.setObject(nil, forKey: persistentStoreKey)
+            persistentStore.setObject(finishedTasksAsJsonArray(), forKey: persistentStoreKey)
         }
     }
     
@@ -186,6 +208,11 @@ class Tasks {
     func saveComplete( succeeded:Bool ) {
         if succeeded {
             reportedTasks += reportingTasks
+            
+            // We only keep finishedTasks in persistent storage
+            for task in reportingTasks {
+                persistentStore.setObject(nil, forKey: task.key())
+            }
         } else {
             // Put 'em back, try again in a second
             insertToFrontOfFinished(reportingTasks)
@@ -226,6 +253,15 @@ class Tasks {
         }
         return dedup(tasks)
     }
+    
+    func finishedTasksAsJsonArray() -> [String] {
+        
+        var ret: [String] = [String]()
+        for task in finishedTasks {
+            ret.append(task.jsonString())
+        }
+        return ret
+    }
 }
 
 class Task {
@@ -263,6 +299,31 @@ class Task {
         }
     }
     
+    init( input:String ) {
+        // motherfucker: can't run SwiftyJSON and GTL together.
+        
+        let encodedInput = input.dataUsingEncoding(NSUTF8StringEncoding)! as NSData
+        
+        do {
+            let json = try NSJSONSerialization.JSONObjectWithData(encodedInput, options: .AllowFragments)
+            
+            if let startTime = json["startTime"] as? String {
+                self.startTime = Clock.dateFromString( startTime )
+            }
+            if let endTime = json["endTime"] as? String {
+                self.endTime = Clock.dateFromString( endTime )
+            }
+            if let desc = json["desc"] as? String {
+                self.desc = desc
+            }
+            if let duration = json["duration"] as? String {
+                self.duration = NSTimeInterval(duration)!
+            }
+        } catch {
+            print("error serializing JSON \(input): \(error)")
+        }
+    }
+    
     func updateTime(now:NSDate) {
         duration = now.timeIntervalSinceDate(startTime)
     }
@@ -273,5 +334,19 @@ class Task {
         } else {
             return Clock.getDurationString(startTime, stop: stop)
         }
+    }
+    
+    func key() -> String {
+        return "\(desc) \(Clock.getTimeString(startTime))"
+    }
+    
+    func jsonString() -> String {
+        let request = GTLObject()
+        request.setJSONValue(Clock.getDateString(startTime), forKey: "startTime")
+        request.setJSONValue(Clock.getDateString(endTime), forKey: "endTime")
+        request.setJSONValue(desc, forKey: "desc")
+        request.setJSONValue(duration, forKey: "duration")
+        
+        return request.JSONString()
     }
 }

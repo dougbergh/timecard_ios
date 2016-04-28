@@ -68,6 +68,8 @@
         override func viewDidLoad() {
             super.viewDidLoad()
             
+            // set up data structures
+            
             sheetService.viewDidLoad()
             
             if clock == nil { clock = Clock(clockDelegate: self) }
@@ -77,6 +79,9 @@
             if tasks == nil {
                 tasks = Tasks()
                 tasks.setSheetService(sheetService)
+                tasks.viewDidLoad()
+            } else {
+                print("viewDidLoad and tasks!=nil")
             }
             
             if activeTaskView == nil {
@@ -86,9 +91,15 @@
             
             drawBlackBorder(totalTodayView)
             
+            datePickerView.datePickerMode = UIDatePickerMode.Date
+            datePickerView.addTarget(self, action: #selector(ViewController.datePickerChanged(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        }
+
+        override func viewDidAppear(animated: Bool) {
+            
+            //  (re)set state
+            
             if taskActive {
-                if clock == nil { clock = Clock(clockDelegate: self) }
-                
                 startButton.hidden = true
                 stopButton.hidden = false
                 activeTaskView.hidden = false
@@ -98,15 +109,9 @@
                 activeTaskView.hidden = true
             }
             
-            datePickerView.datePickerMode = UIDatePickerMode.Date
-            datePickerView.addTarget(self, action: #selector(ViewController.datePickerChanged(_:)), forControlEvents: UIControlEvents.ValueChanged)
-        }
-
-        // When the view appears, ensure that the Google Apps Script Execution API service is authorized
-        override func viewDidAppear(animated: Bool) {
-            
+            // ensure that the Google Apps Script Execution API service is authorized - this 
+            // is where the Google login alert appears
             if sheetService.canAuth() {
-                
             } else {
                 presentViewController(createAuthController(),animated: true,completion: nil)
             }
