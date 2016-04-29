@@ -250,6 +250,16 @@ class Tasks {
                 tasks.append(task.desc!)
             }
         }
+        for task in reportingTasks {
+            if task.desc != nil {
+                tasks.append(task.desc!)
+            }
+        }
+        for task in reportedTasks {
+            if task.desc != nil {
+                tasks.append(task.desc!)
+            }
+        }
         return dedup(tasks)
     }
     
