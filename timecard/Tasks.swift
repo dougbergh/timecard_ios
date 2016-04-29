@@ -64,8 +64,7 @@ class Tasks {
     }
     
     //
-    // Return an array of all tasks that have not been reported and that
-    // started during the interval bounded by start & end
+    // Return an array of all tasks in the source array during the interval bounded by start & end
     //
     func getTasksInInterval(source:[Task],start:NSDate,end:NSDate) -> [Task] {
         var ret = [Task]()

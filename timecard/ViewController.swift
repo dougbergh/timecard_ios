@@ -28,6 +28,14 @@
         @IBOutlet weak var totalTodayLabel: UILabel!
         @IBOutlet weak var totalTodayDurationLabel: UILabel!
         @IBOutlet weak var datePickerView: UIDatePicker!
+        @IBOutlet weak var sheetLinkButton: UIButton!
+        
+        @IBAction func sheetLinkButtonPressed(sender: UIButton) {
+            if let url = NSURL(string: "https://drive.google.com/drive/my-drive") {
+                UIApplication.sharedApplication().openURL(url)
+            }
+
+        }
         
         // backend spreadsheet 
         // Google Sheets implementation
@@ -91,8 +99,11 @@
             
             drawBlackBorder(totalTodayView)
             
-            datePickerView.datePickerMode = UIDatePickerMode.Date
-            datePickerView.addTarget(self, action: #selector(ViewController.datePickerChanged(_:)), forControlEvents: UIControlEvents.ValueChanged)
+//            datePickerView.datePickerMode = UIDatePickerMode.Date
+//            datePickerView.addTarget(self, action: #selector(ViewController.datePickerChanged(_:)), forControlEvents: UIControlEvents.ValueChanged)
+            
+            drawBlackBorder(sheetLinkButton)
+            sheetLinkButton.setTitle("Previous Days' Totals", forState: UIControlState.Normal)
         }
 
         override func viewDidAppear(animated: Bool) {
@@ -211,7 +222,8 @@
                 let duration = tasks.currentlyActiveTask!.durationAsString(newTime)
                 activeTaskDurationLabel.text = duration
             }
-            updateTotal(datePickerView)
+//            updateTotal(datePickerView)
+            totalTodayDurationLabel.text = tasks.totalDurationIntervalAsString(Clock.dayStart(NSDate()),end: Clock.dayEnd(NSDate()))
             
             // If this is the first run of a day, there is bookkeeping to do..
             tasks.checkForDailyActivity()
