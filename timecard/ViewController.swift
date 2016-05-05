@@ -160,7 +160,7 @@
             
             let destVC = segue.destinationViewController as! StartViewController
             destVC.delegate = self
-            destVC.choices = tasks.getAllNames()
+            destVC.allNames = tasks.getAllNames()
         }
 
         //

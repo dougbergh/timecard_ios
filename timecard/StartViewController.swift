@@ -10,8 +10,8 @@ import Foundation
 
 class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
     
-    var choices:[String]!
-    var autocompleteUrls:[String] = [String]()
+    var allNames:[String]!
+    var autocompleteNames:[String] = [String]()
     var delegate:StartDelegate? = nil
 
     @IBOutlet weak var titleLabel: UILabel!
@@ -33,7 +33,7 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
         choicesTableView.dataSource = self
         choicesTableView.scrollEnabled = true
         choicesTableView.hidden = true
-        choicesTableView.rowHeight = 16
+        choicesTableView.rowHeight = 18
         
         textField.autocorrectionType = .No
         textField.becomeFirstResponder()
@@ -61,9 +61,9 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
     
     func searchAutocompleteEntriesWithSubstring(substring: String)
     {
-        autocompleteUrls.removeAll(keepCapacity: false)
+        autocompleteNames.removeAll(keepCapacity: false)
         
-        for curString in choices
+        for curString in allNames
         {
             let myString:NSString! = curString as NSString
             
@@ -71,7 +71,7 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
             
             if (substringRange.location  == 0)
             {
-                autocompleteUrls.append(curString)
+                autocompleteNames.append(curString)
             }
         }
         
@@ -83,7 +83,7 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return autocompleteUrls.count
+        return autocompleteNames.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -92,7 +92,7 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
         let cellIdentifier = "AutoCompleteRowIdentifier"
         let cell = UITableViewCell(style: UITableViewCellStyle.Default , reuseIdentifier: cellIdentifier)
         
-        cell.textLabel!.text = autocompleteUrls[index]
+        cell.textLabel!.text = autocompleteNames[index]
         return cell
     }
     

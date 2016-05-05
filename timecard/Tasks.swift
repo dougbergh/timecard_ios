@@ -23,12 +23,15 @@ class Tasks {
     var finishedTasks = [Task]()    // Tasks that have been finished but not reported
     var reportingTasks = [Task]()   // Tasks in the process of being reported
     var reportedTasks = [Task]()    // Tasks that have been finished and reported
+    var allNames = [String]()
     
     let persistentStore = NSUserDefaults.standardUserDefaults()
     let persistentStoreKey = "timecardFinishedTasks"
+    let persistentStoreNamesKey = "timecardAllNames"
+    let persistentStoreCurrentTaskKey = "timecardCurrentTask"
     
     //
-    // The app is starting, this object is initializing. Reset state from persistent store
+    // The app is starting, this object is initializing. Reset state from persistent store.
     //
     func viewDidLoad() {
         
@@ -39,27 +42,40 @@ class Tasks {
                 finishedTasks.append(task)
             }
         }
+        
+        if let values = persistentStore.objectForKey(persistentStoreNamesKey) {
+            allNames = values as! [String]
+        }
     }
     
     func taskStarted( task: Task ) {
         currentlyActiveTask = task
-//        persistentStore.setObject(task.jsonString(), forKey: task.key())
+        persistentStore.setObject(task.jsonString(), forKey: persistentStoreCurrentTaskKey)
     }
     
     func taskCanceled( task: Task ) {
         currentlyActiveTask  = nil
+        persistentStore.setObject(nil, forKey: persistentStoreCurrentTaskKey)
     }
     
     func taskEnded( time: NSDate ) {
         let task = currentlyActiveTask
         if task != nil {
             task!.endTime = time
-            finishedTasks.append(task!)
-            currentlyActiveTask = nil
             
-            // the persistent value has to be replaced 'cause it had no end time
+            // Add the newly completed task to the finished array and persistent store
+            // (replace the whole persistent array 'cause it's easy)
+            finishedTasks.append(task!)
             persistentStore.setObject(nil, forKey: persistentStoreKey)
             persistentStore.setObject(finishedTasksAsJsonArray(), forKey: persistentStoreKey)
+
+            // Likewise for the allNames array
+            allNames.append(task!.desc!)
+            allNames = dedup(allNames)
+            persistentStore.setObject(nil, forKey: persistentStoreNamesKey)
+            persistentStore.setObject(allNames, forKey: persistentStoreNamesKey)
+
+            currentlyActiveTask = nil
         }
     }
     
@@ -80,15 +96,16 @@ class Tasks {
     // Remove all tasks in the interval from the finishedTasks array
     // (note: in swift, parameters are immutable so we can't pass the array
     // from which to remove the tasks as a parameter)
+    //
     func removeTasksInInterval( start:NSDate, end:NSDate ) -> [Task] {
         
         var ret:[Task] = [Task]()
         
         while finishedTasks.isEmpty == false {
             let task = finishedTasks[0]
-            if task.startTime.timeIntervalSinceDate(start) >= 0 && end.timeIntervalSinceDate(task.startTime) > 0 {
+            if task.startTime.timeIntervalSinceDate(start) >= 0 && task.startTime.timeIntervalSinceDate(end) < 0 {
                 ret.append(finishedTasks.removeFirst())
-            } else { break }
+            } else { break }    // tasks are in chronological order, so we can break out when we find one
         }
         
         return ret
@@ -206,12 +223,10 @@ class Tasks {
     
     func saveComplete( succeeded:Bool ) {
         if succeeded {
+            // Move 'em to reported. No need to update persistent storage
+            // here because it's a single array containing reportingTasks
+            // (by virtue of them having been added to finishedTasks earlier)
             reportedTasks += reportingTasks
-            
-            // We only keep finishedTasks in persistent storage
-            for task in reportingTasks {
-                persistentStore.setObject(nil, forKey: task.key())
-            }
         } else {
             // Put 'em back, try again in a second
             insertToFrontOfFinished(reportingTasks)
@@ -244,23 +259,26 @@ class Tasks {
     }
     
     func getAllNames() -> [String] {
-        var tasks = [String]()
-        for task in finishedTasks {
-            if task.desc != nil {
-                tasks.append(task.desc!)
-            }
-        }
-        for task in reportingTasks {
-            if task.desc != nil {
-                tasks.append(task.desc!)
-            }
-        }
-        for task in reportedTasks {
-            if task.desc != nil {
-                tasks.append(task.desc!)
-            }
-        }
-        return dedup(tasks)
+        
+        return allNames
+        
+//        var tasks = [String]()
+//        for task in finishedTasks {
+//            if task.desc != nil {
+//                tasks.append(task.desc!)
+//            }
+//        }
+//        for task in reportingTasks {
+//            if task.desc != nil {
+//                tasks.append(task.desc!)
+//            }
+//        }
+//        for task in reportedTasks {
+//            if task.desc != nil {
+//                tasks.append(task.desc!)
+//            }
+//        }
+//        return dedup(tasks)
     }
     
     func finishedTasksAsJsonArray() -> [String] {
@@ -345,9 +363,9 @@ class Task {
         }
     }
     
-    func key() -> String {
-        return "\(desc) \(Clock.getTimeString(startTime))"
-    }
+//    func key() -> String {
+//        return "\(desc) \(Clock.getTimeString(startTime))"
+//    }
     
     func jsonString() -> String {
         let request = GTLObject()
