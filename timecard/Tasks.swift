@@ -217,7 +217,7 @@ class Tasks {
             taskNamesArray = dedup(taskNamesArray)
             let taskNames = taskNamesArray.joinWithSeparator(",")
             sheetService.setTasksDelegate(self)
-            sheetService.save(date!,total: total,taskNames: taskNames)
+            sheetService.saveDay(date!,total: total,taskNames: taskNames)
         }
     }
     

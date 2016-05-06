@@ -9,7 +9,7 @@
 import Foundation
 
 protocol SheetServiceProtocol {
-    func save(date:NSDate,total:NSTimeInterval,taskNames:String)
+    func saveDay(date:NSDate,total:NSTimeInterval,taskNames:String)
     func setTasksDelegate( delegate:Tasks )
 }
 
@@ -60,15 +60,35 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
     
     // Google API
     
-    func save(date:NSDate,total:NSTimeInterval,taskNames:String) {
+    func monthYear(date:NSDate) -> (String,String) {
         let fmt = NSDateFormatter()
         fmt.dateStyle = NSDateFormatterStyle.LongStyle
         let dateString = fmt.stringFromDate(date)
         let dateArray = dateString.characters.split(" ")
         let month = String(dateArray[0])
         let year = String(dateArray[2])
+        
+        return (month,year)
+    }
+    
+    func saveTask(date:NSDate,total:NSTimeInterval,taskName:String) {
+        let (month,year) = monthYear(date)
+        let filename = "\(month) \(year) tasks"
+        
+        save(filename,date: date,total: total,taskNames: taskName)
+    }
+    
+    func saveDay(date:NSDate,total:NSTimeInterval,taskNames:String) {
+        let (month,year) = monthYear(date)
         let filename = "\(month) \(year)"
         
+        save(filename,date: date,total: total,taskNames: taskNames)
+        
+    }
+    
+    func save(fileName:String,date:NSDate,total:NSTimeInterval,taskNames:String) {
+        
+        let fmt = NSDateFormatter()
         fmt.dateStyle = NSDateFormatterStyle.ShortStyle
         
         let baseUrl = "https://script.googleapis.com/v1/scripts/\(kScriptId):run"
@@ -77,7 +97,7 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
         // Create an execution request object.
         let request = GTLObject()
         request.setJSONValue("appendRowToMonthly", forKey: "function")
-        request.setJSONValue("\(filename)|\(fmt.stringFromDate(date))|\(Clock.getDurationString(total)!)|\(taskNames)", forKey: "parameters")
+        request.setJSONValue("\(fileName)|\(fmt.stringFromDate(date))|\(Clock.getDurationString(total)!)|\(taskNames)", forKey: "parameters")
         
         // Make the API request.
         service.fetchObjectByInsertingObject(request,
