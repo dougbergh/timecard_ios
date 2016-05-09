@@ -19,8 +19,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HqQ-c9-jK0" userLabel="Start Button">
-                                <rect key="frame" x="257" y="146" width="86" height="86"/>
+                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HqQ-c9-jK0" userLabel="Start Button">
+                                <rect key="frame" x="257" y="253" width="86" height="86"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="86" id="Koz-ic-QCz"/>
                                     <constraint firstAttribute="height" constant="86" id="L4w-yn-jok"/>
@@ -50,8 +50,8 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vuz-ab-VgB" userLabel="Stop Button">
-                                <rect key="frame" x="257" y="146" width="86" height="87"/>
+                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vuz-ab-VgB" userLabel="Stop Button">
+                                <rect key="frame" x="257" y="253" width="86" height="87"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="154" id="4ea-oc-SV8"/>
                                 </constraints>
@@ -65,10 +65,10 @@
                                     <action selector="stopTaskOnTouch:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7vh-zX-S8E"/>
                                 </connections>
                             </button>
-                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="56G-ap-ySx">
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="56G-ap-ySx">
                                 <rect key="frame" x="20" y="350" width="560" height="36"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="active task duration" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bax-gp-2Og">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" ambiguous="YES" text="active task duration" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bax-gp-2Og">
                                         <rect key="frame" x="480" y="8" width="72" height="24"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="72" id="5xo-jU-fQv"/>
@@ -83,7 +83,7 @@
                                             </mask>
                                         </variation>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="Started" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tOp-sm-2Zt">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" preservesSuperviewLayoutMargins="YES" text="Started" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tOp-sm-2Zt">
                                         <rect key="frame" x="8" y="7" width="140" height="24"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="140" id="KzR-nM-dJj"/>
@@ -92,7 +92,7 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="active task start" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hNI-7w-tw0">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" ambiguous="YES" text="active task start" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hNI-7w-tw0">
                                         <rect key="frame" x="424" y="8" width="86" height="24"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="86" id="Qkz-2p-lLU"/>
@@ -129,7 +129,7 @@
                                     </mask>
                                 </variation>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MeC-OJ-aFE">
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MeC-OJ-aFE">
                                 <rect key="frame" x="213" y="526" width="174" height="41"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="174" id="Vh8-Ns-asq"/>
@@ -140,10 +140,10 @@
                                     <action selector="sheetLinkButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fsZ-sr-2Ih"/>
                                 </connections>
                             </button>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iec-1p-rAc">
+                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iec-1p-rAc">
                                 <rect key="frame" x="20" y="438" width="560" height="32"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total Today" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z5R-tb-72p">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Total Today" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z5R-tb-72p">
                                         <rect key="frame" x="8" y="6" width="105" height="24"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="105" id="bUO-nl-1oi"/>
@@ -152,7 +152,7 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="today duration" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P7L-2r-Mx4">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="today duration" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P7L-2r-Mx4">
                                         <rect key="frame" x="480" y="6" width="72" height="24"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="72" id="hHm-E0-y2a"/>
@@ -187,13 +187,14 @@
                             <constraint firstItem="56G-ap-ySx" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Npk-0d-kwu"/>
                             <constraint firstItem="HqQ-c9-jK0" firstAttribute="top" secondItem="Vuz-ab-VgB" secondAttribute="top" id="QGJ-9C-dq4"/>
                             <constraint firstItem="56G-ap-ySx" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Sgu-9k-v9f"/>
-                            <constraint firstItem="MeC-OJ-aFE" firstAttribute="top" secondItem="iec-1p-rAc" secondAttribute="bottom" constant="56" id="WcG-y4-7FP"/>
+                            <constraint firstItem="MeC-OJ-aFE" firstAttribute="top" relation="greaterThanOrEqual" secondItem="iec-1p-rAc" secondAttribute="bottom" constant="12" id="WcG-y4-7FP"/>
                             <constraint firstItem="Vuz-ab-VgB" firstAttribute="trailing" secondItem="HqQ-c9-jK0" secondAttribute="trailing" id="aYe-DT-J0z"/>
                             <constraint firstItem="Jgn-GA-VkN" firstAttribute="centerX" secondItem="HqQ-c9-jK0" secondAttribute="centerX" id="b3L-Cn-R7E"/>
-                            <constraint firstItem="iec-1p-rAc" firstAttribute="top" secondItem="56G-ap-ySx" secondAttribute="bottom" constant="52" id="cHp-xC-wfS"/>
+                            <constraint firstItem="iec-1p-rAc" firstAttribute="top" relation="greaterThanOrEqual" secondItem="56G-ap-ySx" secondAttribute="bottom" constant="12" id="cHp-xC-wfS"/>
                             <constraint firstItem="56G-ap-ySx" firstAttribute="trailing" secondItem="iec-1p-rAc" secondAttribute="trailing" id="cax-bT-Uk3"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="MeC-OJ-aFE" secondAttribute="bottom" constant="33" id="fEJ-h9-Sco"/>
-                            <constraint firstItem="Vuz-ab-VgB" firstAttribute="top" secondItem="Jgn-GA-VkN" secondAttribute="bottom" constant="62" id="i73-5b-JTu"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" relation="greaterThanOrEqual" secondItem="MeC-OJ-aFE" secondAttribute="bottom" constant="12" id="fEJ-h9-Sco"/>
+                            <constraint firstItem="56G-ap-ySx" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Vuz-ab-VgB" secondAttribute="bottom" constant="12" id="hXj-Cd-zrQ"/>
+                            <constraint firstItem="Vuz-ab-VgB" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Jgn-GA-VkN" secondAttribute="bottom" constant="12" id="i73-5b-JTu"/>
                             <constraint firstItem="Vuz-ab-VgB" firstAttribute="centerX" secondItem="56G-ap-ySx" secondAttribute="centerX" id="jjS-IC-fau"/>
                             <constraint firstItem="Vuz-ab-VgB" firstAttribute="leading" secondItem="HqQ-c9-jK0" secondAttribute="leading" id="rq4-AG-9dG"/>
                             <constraint firstItem="Vuz-ab-VgB" firstAttribute="centerY" secondItem="HqQ-c9-jK0" secondAttribute="centerY" id="z9B-M0-pg1"/>

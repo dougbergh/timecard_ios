@@ -17,7 +17,7 @@
                BlueprintIdentifier = "D51788241C9237CC00D5673D"
                BuildableName = "timecard.app"
                BlueprintName = "timecard"
-               ReferencedContainer = "container:timecard.xcodeproj">
+               ReferencedContainer = "container:time card.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "D517883B1C9237CC00D5673D"
                BuildableName = "timecardTests.xctest"
                BlueprintName = "timecardTests"
-               ReferencedContainer = "container:timecard.xcodeproj">
+               ReferencedContainer = "container:time card.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -45,7 +45,7 @@
                BlueprintIdentifier = "D51788461C9237CC00D5673D"
                BuildableName = "timecardUITests.xctest"
                BlueprintName = "timecardUITests"
-               ReferencedContainer = "container:timecard.xcodeproj">
+               ReferencedContainer = "container:time card.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,7 +55,7 @@
             BlueprintIdentifier = "D51788241C9237CC00D5673D"
             BuildableName = "timecard.app"
             BlueprintName = "timecard"
-            ReferencedContainer = "container:timecard.xcodeproj">
+            ReferencedContainer = "container:time card.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -78,7 +78,7 @@
             BlueprintIdentifier = "D51788241C9237CC00D5673D"
             BuildableName = "timecard.app"
             BlueprintName = "timecard"
-            ReferencedContainer = "container:timecard.xcodeproj">
+            ReferencedContainer = "container:time card.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -97,7 +97,7 @@
             BlueprintIdentifier = "D51788241C9237CC00D5673D"
             BuildableName = "timecard.app"
             BlueprintName = "timecard"
-            ReferencedContainer = "container:timecard.xcodeproj">
+            ReferencedContainer = "container:time card.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

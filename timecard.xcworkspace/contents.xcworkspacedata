@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:timecard.xcodeproj">
+      location = "group:/Users/dbergh/Documents/GitHub/timecard_ios/time card.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
