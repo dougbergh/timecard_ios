@@ -16,6 +16,9 @@ class Tasks {
     
     func setSheetService(svc:SheetServiceProtocol) {
         sheetService = svc
+        
+        // make sure we get saveComplete
+        sheetService.setTasksDelegate(self)
     }
     
     var currentlyActiveTask: Task?
@@ -203,21 +206,33 @@ class Tasks {
         }
     }
 
-    func saveTasks(tasksToSave:[Task]) {
+    func saveTasks(input:[Task]) {
+        
         var date:NSDate?
         var total: NSTimeInterval = 0
         var taskNamesArray = [String]()
+        var paramString:String = String()
+        
+        // consolidate duplicate tasks - i.e. if the user worked on the 
+        // same task more than one time period in the day
+        let tasksToSave = consolidate(input)
+
+        // prep date, total and parameters
         for task in tasksToSave {
             date = task.startTime
-            total += task.duration
+            let duration = task.duration
+            total += duration
             taskNamesArray.append(task.desc!)
+            paramString += "\(Clock.getDateString(date!))|\(Clock.getDurationString(total))|\(task.desc!)|"
         }
 
+        // If there are tasks to save, save them and the day summary
         if date != nil {
-            taskNamesArray = dedup(taskNamesArray)
+            let (month, year) = Clock.monthYear(date!)
+            sheetService.save("\(month) \(year) tasks", params: paramString)
+
             let taskNames = taskNamesArray.joinWithSeparator(",")
-            sheetService.setTasksDelegate(self)
-            sheetService.saveDay(date!,total: total,taskNames: taskNames)
+            sheetService.saveTotal("\(month) \(year)",date: date!, total: total, taskNames: taskNames)
         }
     }
     
@@ -234,6 +249,24 @@ class Tasks {
         reportingTasks.removeAll()
     }
     
+    func consolidate(tasks:[Task]) -> [Task] {
+        var retVal = [Task]()
+        var dup = false
+        for task in tasks {
+            for test in retVal {
+                if test.desc == task.desc {
+                    test.duration += task.duration
+                    dup = true
+                }
+            }
+            if dup == false {
+                retVal.append(task)
+            }
+            dup = false
+        }
+        return retVal
+    }
+
     func dedup(tasks:[String]) -> [String] {
         var retVal = [String]()
         var dup = false
@@ -307,9 +340,9 @@ class Task {
         }
         get {
             if endTime != nil {
-                return endTime!.timeIntervalSinceDate(startTime)
+                return round(endTime!.timeIntervalSinceDate(startTime))
             } else {
-                return NSDate().timeIntervalSinceDate(startTime)
+                return round(NSDate().timeIntervalSinceDate(startTime))
             }
         }
     }
@@ -363,14 +396,10 @@ class Task {
         }
     }
     
-//    func key() -> String {
-//        return "\(desc) \(Clock.getTimeString(startTime))"
-//    }
-    
     func jsonString() -> String {
         let request = GTLObject()
-        request.setJSONValue(Clock.getDateString(startTime), forKey: "startTime")
-        request.setJSONValue(Clock.getDateString(endTime), forKey: "endTime")
+        request.setJSONValue(Clock.getDateTimeString(startTime), forKey: "startTime")
+        request.setJSONValue(Clock.getDateTimeString(endTime), forKey: "endTime")
         request.setJSONValue(desc, forKey: "desc")
         request.setJSONValue(duration, forKey: "duration")
         

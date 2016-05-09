@@ -9,7 +9,8 @@
 import Foundation
 
 protocol SheetServiceProtocol {
-    func saveDay(date:NSDate,total:NSTimeInterval,taskNames:String)
+    func saveTotal(fileName:String,date:NSDate,total:NSTimeInterval,taskNames:String)
+    func save(fileName:String,params:String)
     func setTasksDelegate( delegate:Tasks )
 }
 
@@ -60,53 +61,49 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
     
     // Google API
     
-    func monthYear(date:NSDate) -> (String,String) {
-        let fmt = NSDateFormatter()
-        fmt.dateStyle = NSDateFormatterStyle.LongStyle
-        let dateString = fmt.stringFromDate(date)
-        let dateArray = dateString.characters.split(" ")
-        let month = String(dateArray[0])
-        let year = String(dateArray[2])
-        
-        return (month,year)
-    }
+//    func saveTask(date:NSDate,total:NSTimeInterval,taskName:String) {
+//        let (month,year) = Clock.monthYear(date)
+//        let filename = "\(month) \(year) tasks"
+//        
+//        save(filename,date: date,total: total,taskNames: taskName)
+//    }
+//    
+//    func saveDay(date:NSDate,total:NSTimeInterval,taskNames:String) {
+//        let (month,year) = Clock.monthYear(date)
+//        let filename = "\(month) \(year)"
+//        
+//        save(filename,date: date,total: total,taskNames: taskNames)
+//        
+//    }
     
-    func saveTask(date:NSDate,total:NSTimeInterval,taskName:String) {
-        let (month,year) = monthYear(date)
-        let filename = "\(month) \(year) tasks"
-        
-        save(filename,date: date,total: total,taskNames: taskName)
-    }
-    
-    func saveDay(date:NSDate,total:NSTimeInterval,taskNames:String) {
-        let (month,year) = monthYear(date)
-        let filename = "\(month) \(year)"
-        
-        save(filename,date: date,total: total,taskNames: taskNames)
-        
-    }
-    
-    func save(fileName:String,date:NSDate,total:NSTimeInterval,taskNames:String) {
+    func saveTotal(fileName:String,date:NSDate,total:NSTimeInterval,taskNames:String) {
         
         let fmt = NSDateFormatter()
         fmt.dateStyle = NSDateFormatterStyle.ShortStyle
         
+        save(fileName,params: "\(fmt.stringFromDate(date))|\(Clock.getDurationString(total))|\(taskNames)")
+    }
+    
+    func save(fileName:String,params:String) {
+    
         let baseUrl = "https://script.googleapis.com/v1/scripts/\(kScriptId):run"
         let url = GTLUtilities.URLWithString(baseUrl, queryParameters: nil)
         
         // Create an execution request object.
         let request = GTLObject()
-        request.setJSONValue("appendRowToMonthly", forKey: "function")
-        request.setJSONValue("\(fileName)|\(fmt.stringFromDate(date))|\(Clock.getDurationString(total)!)|\(taskNames)", forKey: "parameters")
+        request.setJSONValue("appendRowsToSheet", forKey: "function")
+        request.setJSONValue("\(fileName)|\(params)", forKey: "parameters")
         
         // Make the API request.
         service.fetchObjectByInsertingObject(request,
                                              forURL: url,
                                              delegate: self,
-       didFinishSelector: #selector(self.displayResultWithTicket(_:finishedWithObject:error:)))
+                                             didFinishSelector: #selector(self.displayResultWithTicket(_:finishedWithObject:error:)))
     }
     
-    // Displays the result returned by the Apps Script function.
+    // Handle the result returned by the Apps Script function 
+    // - throw an error if there was one,
+    // - do nothing if there was no error
     @objc func displayResultWithTicket(ticket: GTLServiceTicket,
                                         finishedWithObject object : GTLObject,
                                                            error : NSError?) {

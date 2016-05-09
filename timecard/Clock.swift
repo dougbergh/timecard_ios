@@ -43,9 +43,17 @@ extension Clock {
     //
     // Return the full date & time as a string (suitable for saving in persistent store)
     //
-    static func getDateString(date:NSDate?) -> String {
+    static func getDateTimeString(date:NSDate?) -> String {
         if date == nil { return "" }
         return NSDateFormatter.localizedStringFromDate(date!, dateStyle: .ShortStyle, timeStyle: .MediumStyle)
+    }
+
+    //
+    // Return just the date as a string (suitable for specifying sheets filename)
+    //
+    static func getDateString(date:NSDate?) -> String {
+        if date == nil { return "" }
+        return NSDateFormatter.localizedStringFromDate(date!, dateStyle: .ShortStyle, timeStyle: .NoStyle)
     }
     
     //
@@ -82,12 +90,12 @@ extension Clock {
         return fmt.dateFromString(input)!
     }
     
-    static func getDurationString(start:NSDate, stop:NSDate) -> String? {
+    static func getDurationString(start:NSDate, stop:NSDate) -> String {
         let interval = stop.timeIntervalSinceDate(start)
         return getDurationString(interval)
     }
     
-    static func getDurationString(interval:NSTimeInterval) -> String? {
+    static func getDurationString(interval:NSTimeInterval) -> String {
         let (d,h,m,s) = durationsFromSeconds(seconds: interval)
         var retVal = ""
         if d > 0 { retVal += "\(d):" }
@@ -184,5 +192,16 @@ extension Clock {
     static func dayEndYesterday( date:NSDate ) -> NSDate {
         let yesterday = date.dateByAddingTimeInterval(-60*60*24)
         return dayEnd(yesterday)
+    }
+    
+    static func monthYear(date:NSDate) -> (String,String) {
+        let fmt = NSDateFormatter()
+        fmt.dateStyle = NSDateFormatterStyle.LongStyle
+        let dateString = fmt.stringFromDate(date)
+        let dateArray = dateString.characters.split(" ")
+        let month = String(dateArray[0])
+        let year = String(dateArray[2])
+        
+        return (month,year)
     }
 }
