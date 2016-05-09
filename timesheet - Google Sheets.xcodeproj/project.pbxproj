@@ -282,7 +282,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D51788201C9237CC00D5673D /* Build configuration list for PBXProject "time card" */;
+			buildConfigurationList = D51788201C9237CC00D5673D /* Build configuration list for PBXProject "timesheet - Google Sheets" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -555,7 +555,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.dougbergh.timecard;
+				PRODUCT_BUNDLE_IDENTIFIER = org.dougbergh.timesheet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "timecard/timecard-Bridging-Header.h";
@@ -581,7 +581,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.dougbergh.timecard;
+				PRODUCT_BUNDLE_IDENTIFIER = org.dougbergh.timesheet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "timecard/timecard-Bridging-Header.h";
@@ -640,7 +640,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D51788201C9237CC00D5673D /* Build configuration list for PBXProject "time card" */ = {
+		D51788201C9237CC00D5673D /* Build configuration list for PBXProject "timesheet - Google Sheets" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D517884E1C9237CC00D5673D /* Debug */,
