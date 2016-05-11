@@ -223,7 +223,7 @@ class Tasks {
             let duration = task.duration
             total += duration
             taskNamesArray.append(task.desc!)
-            paramString += "\(Clock.getDateString(date!))|\(Clock.getDurationString(total))|\(task.desc!)|"
+            paramString += "\(Clock.getDateString(date!))|\(Clock.getDurationString(task.duration))|\(task.desc!)|"
         }
 
         // If there are tasks to save, save them and the day summary
