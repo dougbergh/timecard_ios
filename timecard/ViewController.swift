@@ -88,14 +88,12 @@
                 tasks = Tasks()
                 tasks.setSheetService(sheetService)
                 tasks.viewDidLoad()
-            } else {
-                print("viewDidLoad and tasks!=nil")
             }
             
             if activeTaskView == nil {
                 activeTaskView = UIView()
-                drawBlackBorder(activeTaskView)
             }
+            drawBlackBorder(activeTaskView)
             
             drawBlackBorder(totalTodayView)
             
@@ -175,13 +173,15 @@
         //
         // Stop an existing task
         //
+        @IBOutlet var stopConfirmTextField: UITextField!
         @IBAction func stopTaskOnTouch(sender: UIButton) {
             
             let menu = UIAlertController(title: nil, message: "Confirm Task Description", preferredStyle: UIAlertControllerStyle.Alert)
             
             menu.addTextFieldWithConfigurationHandler(stopConfigurationTextField)
             
-            menu.addAction(UIAlertAction(title: "OK", style: .Default , handler: { (UIAlertAction)in
+            menu.addAction(UIAlertAction(title: "OK", style: .Default , handler: { (action) in
+                self.tasks.currentlyActiveTask!.desc = self.stopConfirmTextField.text
                 self.tasks.taskEnded(NSDate())
                 self.clearActiveTaskInView(sender)
             }))
@@ -190,6 +190,7 @@
         
         func stopConfigurationTextField(textField: UITextField!) {
             textField.text = self.tasks.currentlyActiveTask!.desc
+            self.stopConfirmTextField = textField
         }
         
         func setActiveTaskInView(startTime: NSDate) {

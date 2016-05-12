@@ -49,6 +49,10 @@ class Tasks {
         if let values = persistentStore.objectForKey(persistentStoreNamesKey) {
             allNames = values as! [String]
         }
+        
+        if let value = persistentStore.objectForKey(persistentStoreCurrentTaskKey) {
+            currentlyActiveTask = Task(input:value as! String)
+        }
     }
     
     func taskStarted( task: Task ) {
@@ -371,7 +375,9 @@ class Task {
                 self.startTime = Clock.dateFromString( startTime )
             }
             if let endTime = json["endTime"] as? String {
-                self.endTime = Clock.dateFromString( endTime )
+                if endTime.characters.count != 0 {
+                    self.endTime = Clock.dateFromString( endTime )
+                }
             }
             if let desc = json["desc"] as? String {
                 self.desc = desc
