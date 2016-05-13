@@ -33,7 +33,7 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
         choicesTableView.dataSource = self
         choicesTableView.scrollEnabled = true
         choicesTableView.hidden = true
-        choicesTableView.rowHeight = 18
+        choicesTableView.rowHeight = 24
         
         textField.autocorrectionType = .No
         textField.becomeFirstResponder()
@@ -99,5 +99,13 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let selectedCell : UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
         textField.text = selectedCell.textLabel!.text
+    }
+    
+    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if editingStyle == UITableViewCellEditingStyle.Delete {
+            let deleted = autocompleteNames.removeAtIndex(indexPath.row)
+            delegate!.deleteNameFromAllNames(deleted)
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+        }
     }
 }

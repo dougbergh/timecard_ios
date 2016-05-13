@@ -31,7 +31,7 @@ class Tasks {
     let persistentStore = NSUserDefaults.standardUserDefaults()
     let persistentStoreKey = "timecardFinishedTasks"
     let persistentStoreNamesKey = "timecardAllNames"
-    let persistentStoreCurrentTaskKey = "timecardCurrentTask"
+//    let persistentStoreCurrentTaskKey = "timecardCurrentTask"
     
     //
     // The app is starting, this object is initializing. Reset state from persistent store.
@@ -50,19 +50,18 @@ class Tasks {
             allNames = values as! [String]
         }
         
-        if let value = persistentStore.objectForKey(persistentStoreCurrentTaskKey) {
-            currentlyActiveTask = Task(input:value as! String)
-        }
+//        if let value = persistentStore.objectForKey(persistentStoreCurrentTaskKey) {
+//            currentlyActiveTask = Task(input:value as! String)
+//        }
     }
     
     func taskStarted( task: Task ) {
         currentlyActiveTask = task
-        persistentStore.setObject(task.jsonString(), forKey: persistentStoreCurrentTaskKey)
+//        persistentStore.setObject(task.jsonString(), forKey: persistentStoreCurrentTaskKey)
     }
     
     func taskCanceled( task: Task ) {
         currentlyActiveTask  = nil
-        persistentStore.setObject(nil, forKey: persistentStoreCurrentTaskKey)
     }
     
     func taskEnded( time: NSDate ) {
@@ -325,6 +324,12 @@ class Tasks {
             ret.append(task.jsonString())
         }
         return ret
+    }
+    
+    func deleteNameFromAllNames( deleted:String ) {
+        if let index = allNames.indexOf( deleted ) {
+            allNames.removeAtIndex(index)
+        }
     }
 }
 

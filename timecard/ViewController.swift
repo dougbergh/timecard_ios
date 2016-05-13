@@ -10,6 +10,7 @@
     
     protocol StartDelegate {
         func confirmStartTask(name:String)
+        func deleteNameFromAllNames(deleted:String)
     }
     
     class ViewController: UIViewController, ClockDelegate, StartDelegate {
@@ -168,6 +169,10 @@
             let date = NSDate()
             self.setActiveTaskInModel(date, desc: name)
             self.setActiveTaskInView(date)
+        }
+        
+        func deleteNameFromAllNames(deleted: String) {
+            tasks.deleteNameFromAllNames(deleted)
         }
         
         //
