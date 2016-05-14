@@ -13,7 +13,7 @@
         func deleteNameFromAllNames(deleted:String)
     }
     
-    class ViewController: UIViewController, ClockDelegate, StartDelegate {
+    class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ClockDelegate, StartDelegate {
         
         // view
 
@@ -23,8 +23,7 @@
         @IBOutlet weak var startButton: UIButton!
         @IBOutlet weak var activeTaskView: UIView!
         @IBOutlet weak var activeTaskLabel: UILabel!
-        @IBOutlet weak var activeTaskStartTimeLabel: UILabel!
-        @IBOutlet weak var activeTaskDurationLabel: UILabel!
+        @IBOutlet weak var activeTaskTableView: UITableView!
         @IBOutlet weak var totalTodayView: UIView!
         @IBOutlet weak var totalTodayLabel: UILabel!
         @IBOutlet weak var totalTodayDurationLabel: UILabel!
@@ -91,9 +90,8 @@
                 tasks.viewDidLoad()
             }
             
-            if activeTaskView == nil {
-                activeTaskView = UIView()
-            }
+            activeTaskTableView.dataSource = self
+            activeTaskTableView.delegate = self
             drawBlackBorder(activeTaskView)
             
             drawBlackBorder(totalTodayView)
@@ -102,7 +100,6 @@
 //            datePickerView.addTarget(self, action: #selector(ViewController.datePickerChanged(_:)), forControlEvents: UIControlEvents.ValueChanged)
             
             drawBlackBorder(sheetLinkButton)
-            sheetLinkButton.setTitle("Previous Days' Totals", forState: UIControlState.Normal)
         }
 
         override func viewDidAppear(animated: Bool) {
@@ -110,13 +107,9 @@
             //  (re)set state
             
             if taskActive {
-                startButton.hidden = true
-                stopButton.hidden = false
-                activeTaskView.hidden = false
+                self.setActiveTaskInView()
             } else {
-                startButton.hidden = false
-                stopButton.hidden = true
-                activeTaskView.hidden = true
+                clearActiveTaskInView(nil)
             }
             
             // ensure that the Google Apps Script Execution API service is authorized - this 
@@ -168,7 +161,7 @@
         func confirmStartTask( name:String ) {
             let date = NSDate()
             self.setActiveTaskInModel(date, desc: name)
-            self.setActiveTaskInView(date)
+            self.setActiveTaskInView()
         }
         
         func deleteNameFromAllNames(deleted: String) {
@@ -198,14 +191,15 @@
             self.stopConfirmTextField = textField
         }
         
-        func setActiveTaskInView(startTime: NSDate) {
+        func setActiveTaskInView() {
             
-            drawBlackBorder(activeTaskView)
             activeTaskView.hidden = false
-            activeTaskLabel.text = tasks.currentlyActiveTask!.desc
-            activeTaskStartTimeLabel.text = Clock.getTimeString(startTime)
+            activeTaskLabel.text = "Active Task"
+            
             startButton.hidden = true
             stopButton.hidden = false
+            
+//            drawBlackBorder(activeTaskView)
         }
         
         func setActiveTaskInModel(date:NSDate, desc:String?) {
@@ -216,8 +210,8 @@
         
         func clearActiveTaskInView(sender:UIButton?) {
             activeTaskView.hidden = true
-            if sender != nil { sender!.hidden = true }
             startButton.hidden = false
+            stopButton.hidden = true
         }
         
         func updateTime( newTime: NSDate ) {
@@ -225,8 +219,7 @@
             
             if taskActive == true {
                 tasks.currentlyActiveTask!.updateTime( newTime )
-                let duration = tasks.currentlyActiveTask!.durationAsString(newTime)
-                activeTaskDurationLabel.text = duration
+                activeTaskTableView.reloadData()
             }
 //            updateTotal(datePickerView)
             totalTodayDurationLabel.text = tasks.totalDurationIntervalAsString(Clock.dayStart(NSDate()),end: Clock.dayEnd(NSDate()))
@@ -239,6 +232,32 @@
             view.layer.borderColor = UIColor.blackColor().CGColor
             view.layer.borderWidth = 2.0
             view.layer.cornerRadius = 8
+        }
+        
+        func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            return 3  // name, start, duration
+        }
+        
+        func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+            let cell = UITableViewCell(style: UITableViewCellStyle.Value2, reuseIdentifier: nil)
+            switch indexPath.item {
+            case 0:
+                cell.textLabel?.text = "Name"
+                cell.detailTextLabel?.text = tasks.currentlyActiveTask?.desc
+            case 1:
+                cell.textLabel?.text = "Started"
+                cell.detailTextLabel?.text = Clock.getTimeString(tasks.currentlyActiveTask?.startTime)
+            case 2:
+                cell.textLabel?.text = "Time So Far"
+                cell.detailTextLabel?.text = tasks.currentlyActiveTask?.durationAsString(NSDate())
+            default: break
+            }
+            
+            return cell
+        }
+        
+        func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+            
         }
         
         func datePickerChanged(datePicker:UIDatePicker) {
@@ -279,25 +298,25 @@
         func viewController(vc : UIViewController,
                             finishedWithAuth authResult : GTMOAuth2Authentication, error : NSError?) {
             
-            if let error = error {
-                sheetService.service.authorizer = nil
-                showAlert("Authentication Error", message: error.localizedDescription)
-                return
-            }
+//            if let error = error {
+//                sheetService.service.authorizer = nil
+//                showAlert("Authentication Error", message: error.localizedDescription)
+//                return
+//            }
             
             sheetService.service.authorizer = authResult
             dismissViewControllerAnimated(true, completion: nil)
         }
         
         // Helper for showing an alert
-        func showAlert(title : String, message: String) {
-            let alert = UIAlertView(
-                title: title,
-                message: message,
-                delegate: nil,
-                cancelButtonTitle: "OK"
-            )
-            alert.show()
-        }
+//        func showAlert(title : String, message: String) {
+//            let alert = UIAlertView(
+//                title: title,
+//                message: message,
+//                delegate: nil,
+//                cancelButtonTitle: "OK"
+//            )
+//            alert.show()
+//        }
     }
     

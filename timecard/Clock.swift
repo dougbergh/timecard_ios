@@ -98,12 +98,10 @@ extension Clock {
     static func getDurationString(interval:NSTimeInterval) -> String {
         let (d,h,m,s) = durationsFromSeconds(seconds: interval)
         var retVal = ""
-        if d > 0 { retVal += "\(d):" }
-        if h > 0 { retVal += "\(h):" }
-        if h > 0 && m < 10 { retVal += "0" }
-        if h > 0 || m > 0 { retVal += "\(m):" }
-        if m > 0 && s < 10 { retVal += "0" }
-        retVal += "\(s)"
+        if d > 0 { retVal += "\(d)d " }
+        if h > 0 { retVal += "\(h)h " }
+        if m > 0 { retVal += "\(m)m " }
+        retVal += "\(s)s"
         return retVal
     }
     

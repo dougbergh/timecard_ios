@@ -330,6 +330,8 @@ class Tasks {
         if let index = allNames.indexOf( deleted ) {
             allNames.removeAtIndex(index)
         }
+        persistentStore.setObject(nil, forKey: persistentStoreNamesKey)
+        persistentStore.setObject(allNames, forKey: persistentStoreNamesKey)
     }
 }
 

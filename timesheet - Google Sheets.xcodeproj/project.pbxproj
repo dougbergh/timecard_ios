@@ -20,6 +20,7 @@
 		D5841C2D1CB2FE7400F823BC /* GTMOAuth2ViewTouch.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5841C2C1CB2FE7400F823BC /* GTMOAuth2ViewTouch.xib */; };
 		D58CC8AE1CC5595700B61BBD /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = D58CC8AD1CC5595700B61BBD /* Podfile */; };
 		D5EE1B3A1CC7D8C1002A97E1 /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5EE1B391CC7D8C1002A97E1 /* StartViewController.swift */; };
+		D5EEB8461CE6B37800146122 /* ActiveTaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5EEB8451CE6B37800146122 /* ActiveTaskTableViewCell.swift */; };
 		D5F9607D1CBDEA1900A7097E /* GoogleSheetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F9607C1CBDEA1900A7097E /* GoogleSheetService.swift */; };
 		EB73AEF5C57C20E844615B35 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 06B80AF0CC787B4BFAF50351 /* libPods.a */; };
 /* End PBXBuildFile section */
@@ -81,6 +82,7 @@
 		D58CC8AD1CC5595700B61BBD /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		D5A8DD9F1CBF0AA30053289D /* timecard.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = timecard.xcodeproj; sourceTree = "<group>"; };
 		D5EE1B391CC7D8C1002A97E1 /* StartViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
+		D5EEB8451CE6B37800146122 /* ActiveTaskTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ActiveTaskTableViewCell.swift; path = ../ActiveTaskTableViewCell.swift; sourceTree = "<group>"; };
 		D5F9607C1CBDEA1900A7097E /* GoogleSheetService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleSheetService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -146,6 +148,7 @@
 		D51788271C9237CC00D5673D /* timecard */ = {
 			isa = PBXGroup;
 			children = (
+				D5EEB8451CE6B37800146122 /* ActiveTaskTableViewCell.swift */,
 				D5841C2C1CB2FE7400F823BC /* GTMOAuth2ViewTouch.xib */,
 				D51788281C9237CC00D5673D /* AppDelegate.swift */,
 				D517882A1C9237CC00D5673D /* ViewController.swift */,
@@ -391,6 +394,7 @@
 			files = (
 				D51844FC1C9359150064197D /* Tasks.swift in Sources */,
 				D5EE1B3A1CC7D8C1002A97E1 /* StartViewController.swift in Sources */,
+				D5EEB8461CE6B37800146122 /* ActiveTaskTableViewCell.swift in Sources */,
 				D517882B1C9237CC00D5673D /* ViewController.swift in Sources */,
 				D5F9607D1CBDEA1900A7097E /* GoogleSheetService.swift in Sources */,
 				D51788311C9237CC00D5673D /* timecard.xcdatamodeld in Sources */,
