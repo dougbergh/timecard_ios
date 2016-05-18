@@ -75,7 +75,6 @@
 		D517884D1C9237CC00D5673D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D51844FB1C9359150064197D /* Tasks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tasks.swift; sourceTree = "<group>"; };
 		D51844FD1C95EB4D0064197D /* Clock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
-		D56276981CC591EF009298FA /* libGoogle-API-Client.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libGoogle-API-Client.a"; path = "Pods/../build/Debug-iphoneos/libGoogle-API-Client.a"; sourceTree = "<group>"; };
 		D5841BFE1CB2E3AE00F823BC /* timecard-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "timecard-Bridging-Header.h"; sourceTree = "<group>"; };
 		D5841C2C1CB2FE7400F823BC /* GTMOAuth2ViewTouch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = GTMOAuth2ViewTouch.xib; path = "../../google-api-objectivec-client/Deps/gtm-oauth2/Source/Touch/GTMOAuth2ViewTouch.xib"; sourceTree = "<group>"; };
 		D586235B1CD153B500F7AFBE /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = "../../../Library/Developer/Xcode/DerivedData/timecard-bqscgzsnnoplobfnsrfqrjbnsiwi/Build/Products/Debug-iphoneos/SwiftyJSON.framework"; sourceTree = "<group>"; };
@@ -195,7 +194,6 @@
 			isa = PBXGroup;
 			children = (
 				D586235B1CD153B500F7AFBE /* SwiftyJSON.framework */,
-				D56276981CC591EF009298FA /* libGoogle-API-Client.a */,
 				06B80AF0CC787B4BFAF50351 /* libPods.a */,
 			);
 			name = Frameworks;

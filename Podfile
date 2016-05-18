@@ -1,1 +1,1 @@
-pod 'Google-API-Client'
+pod 'Google-API-Client/Drive'
