@@ -9,7 +9,7 @@
 import Foundation
 
 protocol SheetServiceProtocol {
-    func saveTotal(fileName:String,date:NSDate,total:NSTimeInterval,taskNames:String)
+    func saveTotal(fileName:String,date:String,total:NSTimeInterval,taskNames:String)
     func save(fileName:String,params:String)
     func setTasksDelegate( delegate:Tasks )
 }
@@ -61,27 +61,9 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
     
     // Google API
     
-//    func saveTask(date:NSDate,total:NSTimeInterval,taskName:String) {
-//        let (month,year) = Clock.monthYear(date)
-//        let filename = "\(month) \(year) tasks"
-//        
-//        save(filename,date: date,total: total,taskNames: taskName)
-//    }
-//    
-//    func saveDay(date:NSDate,total:NSTimeInterval,taskNames:String) {
-//        let (month,year) = Clock.monthYear(date)
-//        let filename = "\(month) \(year)"
-//        
-//        save(filename,date: date,total: total,taskNames: taskNames)
-//        
-//    }
-    
-    func saveTotal(fileName:String,date:NSDate,total:NSTimeInterval,taskNames:String) {
+    func saveTotal(fileName:String,date:String,total:NSTimeInterval,taskNames:String) {
         
-        let fmt = NSDateFormatter()
-        fmt.dateStyle = NSDateFormatterStyle.ShortStyle
-        
-        save(fileName,params: "\(fmt.stringFromDate(date))|\(Clock.getDurationString(total))|\(taskNames)")
+        save(fileName,params: "\(date)|\(Clock.getDurationString(total))|\(taskNames)")
     }
     
     func save(fileName:String,params:String) {

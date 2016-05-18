@@ -31,7 +31,6 @@ class Tasks {
     let persistentStore = NSUserDefaults.standardUserDefaults()
     let persistentStoreKey = "timecardFinishedTasks"
     let persistentStoreNamesKey = "timecardAllNames"
-//    let persistentStoreCurrentTaskKey = "timecardCurrentTask"
     
     //
     // The app is starting, this object is initializing. Reset state from persistent store.
@@ -50,14 +49,10 @@ class Tasks {
             allNames = values as! [String]
         }
         
-//        if let value = persistentStore.objectForKey(persistentStoreCurrentTaskKey) {
-//            currentlyActiveTask = Task(input:value as! String)
-//        }
     }
     
     func taskStarted( task: Task ) {
         currentlyActiveTask = task
-//        persistentStore.setObject(task.jsonString(), forKey: persistentStoreCurrentTaskKey)
     }
     
     func taskCanceled( task: Task ) {
@@ -82,6 +77,8 @@ class Tasks {
             persistentStore.setObject(allNames, forKey: persistentStoreNamesKey)
 
             currentlyActiveTask = nil
+            
+            debugCount += 1
         }
     }
     
@@ -130,18 +127,17 @@ class Tasks {
     func totalDurationInterval(start:NSDate,end:NSDate) -> NSTimeInterval {
 
         var total: NSTimeInterval = 0
-        var tasks = getTasksInInterval(reportedTasks,start: start,end: end)
+
+        var tasks = getTasksInInterval(reportingTasks,start: start,end: end)
         for task in tasks {
             total += task.duration
         }
-        tasks = getTasksInInterval(reportingTasks,start: start,end: end)
-        for task in tasks {
-            total += task.duration
-        }
+
         tasks = getTasksInInterval(finishedTasks,start: start,end: end)
         for task in tasks {
             total += task.duration
         }
+
         if currentlyActiveTask != nil &&
             currentlyActiveTask!.startTime.timeIntervalSinceDate(start) > 0 &&
             end.timeIntervalSinceDate(currentlyActiveTask!.startTime) > 0 {
@@ -192,6 +188,10 @@ class Tasks {
         // check for tasks from a previous day that need to be saved
         let task = finishedTasks[0]
         if Clock.sameDay(task.startTime, date2: now) == false {
+        
+//        if debugCount > 2 { // XXX for debugging
+//            debugCount = 0
+            
 //        if true {      // XXX for debugging
         
             // save one prior day's tasks (if the app hasn't run for a couple days,
@@ -211,32 +211,32 @@ class Tasks {
 
     func saveTasks(input:[Task]) {
         
-        var date:NSDate?
         var total: NSTimeInterval = 0
         var taskNamesArray = [String]()
         var paramString:String = String()
         
-        // consolidate duplicate tasks - i.e. if the user worked on the 
+        if input.count == 0 {return}
+        
+        let dateColumn:String = Clock.getDateString(input[0].startTime)
+        let (month, year) = Clock.monthYear(input[0].startTime)
+        
+        // consolidate duplicate tasks - i.e. if the user worked on the
         // same task more than one time period in the day
         let tasksToSave = consolidate(input)
-
+        
         // prep date, total and parameters
         for task in tasksToSave {
-            date = task.startTime
             let duration = task.duration
             total += duration
             taskNamesArray.append(task.desc!)
-            paramString += "\(Clock.getDateString(date!))|\(Clock.getDurationString(task.duration))|\(task.desc!)|"
+            paramString += "\(dateColumn)|\(Clock.getDurationString(task.duration))|\(task.desc!)|"
         }
-
+        
         // If there are tasks to save, save them and the day summary
-        if date != nil {
-            let (month, year) = Clock.monthYear(date!)
-            sheetService.save("\(month) \(year) tasks", params: paramString)
-
-            let taskNames = taskNamesArray.joinWithSeparator(",")
-            sheetService.saveTotal("\(month) \(year)",date: date!, total: total, taskNames: taskNames)
-        }
+        sheetService.save("\(month) \(year) tasks", params: paramString)
+        
+        let taskNames = taskNamesArray.joinWithSeparator(",")
+        sheetService.saveTotal("\(month) \(year)",date: dateColumn, total: total, taskNames: taskNames)
     }
     
     func saveComplete( succeeded:Bool ) {
@@ -252,8 +252,8 @@ class Tasks {
         reportingTasks.removeAll()
     }
     
-    func consolidate(tasks:[Task]) -> [Task] {
-        var retVal = [Task]()
+    func consolidate(tasks:[Task]) -> [ConsolidatedTask] {
+        var retVal = [ConsolidatedTask]()
         var dup = false
         for task in tasks {
             for test in retVal {
@@ -263,7 +263,9 @@ class Tasks {
                 }
             }
             if dup == false {
-                retVal.append(task)
+                let consolidatedTask = ConsolidatedTask(desc: task.desc!)
+                consolidatedTask.duration = task.duration
+                retVal.append(consolidatedTask)
             }
             dup = false
         }
@@ -297,24 +299,6 @@ class Tasks {
     func getAllNames() -> [String] {
         
         return allNames
-        
-//        var tasks = [String]()
-//        for task in finishedTasks {
-//            if task.desc != nil {
-//                tasks.append(task.desc!)
-//            }
-//        }
-//        for task in reportingTasks {
-//            if task.desc != nil {
-//                tasks.append(task.desc!)
-//            }
-//        }
-//        for task in reportedTasks {
-//            if task.desc != nil {
-//                tasks.append(task.desc!)
-//            }
-//        }
-//        return dedup(tasks)
     }
     
     func finishedTasksAsJsonArray() -> [String] {
@@ -417,5 +401,14 @@ class Task {
         request.setJSONValue(duration, forKey: "duration")
         
         return request.JSONString()
+    }
+}
+
+class ConsolidatedTask {
+    var desc:String!
+    var duration: NSTimeInterval = 0.0
+    
+    init( desc: String ) {
+        self.desc = desc
     }
 }
