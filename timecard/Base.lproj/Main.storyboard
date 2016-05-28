@@ -272,6 +272,24 @@
             </objects>
             <point key="canvasLocation" x="1066" y="7"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="KKd-w2-rNa">
+            <objects>
+                <viewController storyboardIdentifier="End View Controller" id="ls6-9s-7ba" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Brl-HZ-WKx"/>
+                        <viewControllerLayoutGuide type="bottom" id="8Cl-yZ-tVx"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="FkQ-Nb-ClP">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="k39-z1-4bE" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1025" y="145"/>
+        </scene>
     </scenes>
     <resources>
         <image name="start" width="256" height="256"/>

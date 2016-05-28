@@ -19,6 +19,7 @@
 		D562769A1CC59473009298FA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D51788321C9237CC00D5673D /* Assets.xcassets */; };
 		D5841C2D1CB2FE7400F823BC /* GTMOAuth2ViewTouch.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5841C2C1CB2FE7400F823BC /* GTMOAuth2ViewTouch.xib */; };
 		D58CC8AE1CC5595700B61BBD /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = D58CC8AD1CC5595700B61BBD /* Podfile */; };
+		D5C744011CF2205300CE8009 /* EndViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5C744001CF2205300CE8009 /* EndViewController.swift */; };
 		D5EE1B3A1CC7D8C1002A97E1 /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5EE1B391CC7D8C1002A97E1 /* StartViewController.swift */; };
 		D5EEB8461CE6B37800146122 /* ActiveTaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5EEB8451CE6B37800146122 /* ActiveTaskTableViewCell.swift */; };
 		D5F9607D1CBDEA1900A7097E /* GoogleSheetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F9607C1CBDEA1900A7097E /* GoogleSheetService.swift */; };
@@ -80,6 +81,7 @@
 		D586235B1CD153B500F7AFBE /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = "../../../Library/Developer/Xcode/DerivedData/timecard-bqscgzsnnoplobfnsrfqrjbnsiwi/Build/Products/Debug-iphoneos/SwiftyJSON.framework"; sourceTree = "<group>"; };
 		D58CC8AD1CC5595700B61BBD /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		D5A8DD9F1CBF0AA30053289D /* timecard.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = timecard.xcodeproj; sourceTree = "<group>"; };
+		D5C744001CF2205300CE8009 /* EndViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndViewController.swift; sourceTree = "<group>"; };
 		D5EE1B391CC7D8C1002A97E1 /* StartViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
 		D5EEB8451CE6B37800146122 /* ActiveTaskTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ActiveTaskTableViewCell.swift; path = ../ActiveTaskTableViewCell.swift; sourceTree = "<group>"; };
 		D5F9607C1CBDEA1900A7097E /* GoogleSheetService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleSheetService.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				D5841BFE1CB2E3AE00F823BC /* timecard-Bridging-Header.h */,
 				D5F9607C1CBDEA1900A7097E /* GoogleSheetService.swift */,
 				D5EE1B391CC7D8C1002A97E1 /* StartViewController.swift */,
+				D5C744001CF2205300CE8009 /* EndViewController.swift */,
 			);
 			path = timecard;
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5C744011CF2205300CE8009 /* EndViewController.swift in Sources */,
 				D51844FC1C9359150064197D /* Tasks.swift in Sources */,
 				D5EE1B3A1CC7D8C1002A97E1 /* StartViewController.swift in Sources */,
 				D5EEB8461CE6B37800146122 /* ActiveTaskTableViewCell.swift in Sources */,

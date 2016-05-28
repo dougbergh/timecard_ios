@@ -32,9 +32,12 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
         choicesTableView.delegate = self
         choicesTableView.dataSource = self
         choicesTableView.scrollEnabled = true
-        choicesTableView.hidden = true
         choicesTableView.rowHeight = 24
+        choicesTableView.hidden = false
         
+        autocompleteNames = allNames    // cause all names to appear before the user types anything
+        choicesTableView.reloadData()
+
         textField.autocorrectionType = .No
         textField.becomeFirstResponder()
     }
