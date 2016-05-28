@@ -33,9 +33,10 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
         choicesTableView.dataSource = self
         choicesTableView.scrollEnabled = true
         choicesTableView.rowHeight = 24
-        choicesTableView.hidden = false
+        choicesTableView.hidden = false     // cause all names to appear before the user types anything
         
-        autocompleteNames = allNames.sort{ $0 < $1 }    // cause all names to appear before the user types anything
+        allNames = allNames.sort{ $0 < $1 }
+        autocompleteNames = allNames
         choicesTableView.reloadData()
 
         textField.autocorrectionType = .No
@@ -72,7 +73,7 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
             
             let substringRange :NSRange! = myString.rangeOfString(substring)
             
-            if (substringRange.location  == 0)
+            if (substringRange.location  == 0 || substring.isEmpty == true)
             {
                 autocompleteNames.append(curString)
             }
