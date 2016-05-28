@@ -187,11 +187,11 @@ class Tasks {
         
         // check for tasks from a previous day that need to be saved
         let task = finishedTasks[0]
-//        if Clock.sameDay(task.startTime, date2: now) == false {
+        if Clock.sameDay(task.startTime, date2: now) == false {
         
-        if debugCount > 2 { // XXX for debugging
-            debugCount = 0
-            
+//        if debugCount > 2 { // XXX for debugging
+//            debugCount = 0
+        
 //        if true {      // XXX for debugging
         
             // save one prior day's tasks (if the app hasn't run for a couple days,
