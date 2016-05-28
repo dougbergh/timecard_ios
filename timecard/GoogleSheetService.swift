@@ -9,7 +9,7 @@
 import Foundation
 
 protocol SheetServiceProtocol {
-    func saveTotal(fileName:String,date:String,total:NSTimeInterval,taskNames:String)
+    func saveTotal(fileName:String,date:String,total:String,taskNames:String)
     func save(fileName:String,params:String)
     func setTasksDelegate( delegate:Tasks )
 }
@@ -61,9 +61,9 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
     
     // Google API
     
-    func saveTotal(fileName:String,date:String,total:NSTimeInterval,taskNames:String) {
+    func saveTotal(fileName:String,date:String,total:String,taskNames:String) {
         
-        save(fileName,params: "\(date)|\(Clock.getDurationString(total))|\(taskNames)")
+        save(fileName,params: "\(date)|\(total)|\(taskNames)")
     }
     
     func save(fileName:String,params:String) {

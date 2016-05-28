@@ -187,10 +187,10 @@ class Tasks {
         
         // check for tasks from a previous day that need to be saved
         let task = finishedTasks[0]
-        if Clock.sameDay(task.startTime, date2: now) == false {
+//        if Clock.sameDay(task.startTime, date2: now) == false {
         
-//        if debugCount > 2 { // XXX for debugging
-//            debugCount = 0
+        if debugCount > 2 { // XXX for debugging
+            debugCount = 0
             
 //        if true {      // XXX for debugging
         
@@ -209,6 +209,9 @@ class Tasks {
         }
     }
 
+    //
+    // If there are tasks to save, save them and the day summary
+    //
     func saveTasks(input:[Task]) {
         
         var total: NSTimeInterval = 0
@@ -232,11 +235,16 @@ class Tasks {
             paramString += "\(dateColumn)|\(Clock.getDurationString(task.duration))|\(task.desc!)|"
         }
         
-        // If there are tasks to save, save them and the day summary
+        // save individual (consolidated) tasks
         sheetService.save("\(month) \(year) tasks", params: paramString)
         
+        // save day's summary
         let taskNames = taskNamesArray.joinWithSeparator(",")
-        sheetService.saveTotal("\(month) \(year)",date: dateColumn, total: total, taskNames: taskNames)
+        let decimal = round(Clock.durationAsDecimal(seconds: total) * 100) / 100
+        sheetService.saveTotal("\(month) \(year)",
+                               date: dateColumn,
+                               total: "\(decimal)",
+                               taskNames: taskNames)
     }
     
     func saveComplete( succeeded:Bool ) {

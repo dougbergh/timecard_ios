@@ -109,6 +109,18 @@ extension Clock {
         return (Int(s / (24 * 3600.0)),Int((s % (24 * 3600.0)) / 3600.0),Int(s % 3600 / 60.0),Int(s % 60.0))
     }
     
+    static func durationAsDecimal( seconds interval: NSTimeInterval ) -> Float {
+        var (_,h,m,s) = durationsFromSeconds(seconds: interval)
+        
+        m += ( s>=30 ? 1 : 0)
+        
+        let fraction = Float(m) / 60.0
+        
+        let ret:Float = Float(h) + fraction
+        
+        return ret
+    }
+    
     //
     // Return an NSDate that represents the first instant of today
     //
