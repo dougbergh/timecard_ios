@@ -35,7 +35,7 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
         choicesTableView.rowHeight = 24
         choicesTableView.hidden = false
         
-        autocompleteNames = allNames    // cause all names to appear before the user types anything
+        autocompleteNames = allNames.sort{ $0 < $1 }    // cause all names to appear before the user types anything
         choicesTableView.reloadData()
 
         textField.autocorrectionType = .No
