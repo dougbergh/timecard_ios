@@ -185,6 +185,7 @@ class Tasks {
         
         // request outstanding
         if ( reportingTasks.isEmpty == false ) {
+            print("request outstanding; not saving")
             Flurry.logEvent("request outstanding; not saving")
             return
         }
@@ -262,17 +263,22 @@ class Tasks {
                                taskNames: taskNames)
     }
     
-    func saveComplete( succeeded:Bool ) {
+    func saveComplete( succeeded:Bool, error:String? ) {
         if succeeded {
+            print( "save SUCCESS; \(reportingTasks.count) saved" )
             Flurry.logEvent( "save SUCCESS; \(reportingTasks.count) saved" )
             // Move 'em to reported. No need to update persistent storage
             // here because it's a single array containing reportingTasks
             // (by virtue of them having been added to finishedTasks earlier)
             reportedTasks += reportingTasks
         } else {
-            Flurry.logEvent( "save FAIL;  \(reportingTasks.count) to retry")
+            print( "save FAIL: \(error); \(reportingTasks.count) to retry" )
+            Flurry.logEvent( "save FAIL: \(error); \(reportingTasks.count) to retry" )
             // Put 'em back, try again in a second
             insertToFrontOfFinished(reportingTasks)
+            
+            ViewController.showAlert("saveFAIL", message:error! )
+            
         }
         reportingTasks.removeAll()
     }

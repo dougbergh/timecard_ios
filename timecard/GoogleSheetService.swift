@@ -103,13 +103,15 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
                                 finishedWithObject object : GTLObject,
                                                    error : NSError?) {
         
-        var success = true
-        
         if let error = error {
             // The API encountered a problem before the script started executing.
-            Flurry.logEvent(("The API returned the error: \(error.localizedDescription)"))
-            success = false
-
+            let event = "Google API returned error: \(error.localizedDescription)"
+            
+            print(event)
+            Flurry.logEvent(event)
+            
+            tasksDelegate?.saveComplete(false,error: event)
+            
          } else if let apiError = object.JSON["error"] as? [String: AnyObject] {
             // The API executed, but the script returned an error.
             
@@ -133,10 +135,10 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
                 }
             }
             
-            // Set the output as the compiled error message.
+            print( errMessage )
             Flurry.logEvent(errMessage)
             
-            success = false
+            tasksDelegate?.saveComplete(false, error: errMessage)
         } else {
             // no error? don't want no stinking output
             // The result provided by the API needs to be cast into the
@@ -145,8 +147,8 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
 //            if let response = object.JSON["response"] as! [String: AnyObject]? {
 //                output.text = response.description
 //            }
+            
+            tasksDelegate?.saveComplete(true, error: nil)
         }
-        
-        tasksDelegate?.saveComplete(success)
     }
 }

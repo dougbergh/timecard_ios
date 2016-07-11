@@ -282,9 +282,11 @@
             sheetService.service.authorizer = authResult
             dismissViewControllerAnimated(true, completion: nil)
         }
-        
+    }
+    
+    extension ViewController {
         // Helper for showing an alert
-        func showAlert(title : String, message: String) {
+        static func showAlert(title : String, message: String) {
             let alert = UIAlertView(
                 title: title,
                 message: message,
@@ -293,5 +295,5 @@
             )
             alert.show()
         }
+
     }
-    
