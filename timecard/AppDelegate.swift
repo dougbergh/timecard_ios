@@ -8,6 +8,8 @@
 
 import UIKit
 import CoreData
+//import Flurry_iOS_SDK
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,7 +19,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        return true
+
+        if let flurryAPIKey = NSBundle.mainBundle().objectForInfoDictionaryKey("FLURRY_API_KEY") as! String? {
+            Flurry.startSession(flurryAPIKey);
+        } else {
+            Flurry.startSession("939HQXJ2P4XNXDYNM6SX");
+        }
+return true
     }
 
     func applicationWillResignActive(application: UIApplication) {

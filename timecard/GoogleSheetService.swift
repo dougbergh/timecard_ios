@@ -33,6 +33,19 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
     // When the parent view loads, initialize the Google Apps Script Execution API service
     func viewDidLoad() {
         
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        
+        if userDefaults.boolForKey("hasRunBefore") == false {
+            
+            // remove keychain items here XXX recover from changing Google password by deleting when re-installing.
+            // XXX do the better thing too: re-login after getting an error
+            
+            
+            // update the flag indicator
+            userDefaults.setBool(true, forKey: "hasRunBefore")
+            userDefaults.synchronize() // forces the app to update the NSUserDefaults
+        }
+        
         if let auth = GTMOAuth2ViewControllerTouch.authForGoogleFromKeychainForName(
             kKeychainItemName,
             clientID: kClientID,
@@ -80,22 +93,21 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
         service.fetchObjectByInsertingObject(request,
                                              forURL: url,
                                              delegate: self,
-                                             didFinishSelector: #selector(self.displayResultWithTicket(_:finishedWithObject:error:)))
+                                             didFinishSelector: #selector(self.requestCompleted(_:finishedWithObject:error:)))
     }
     
     // Handle the result returned by the Apps Script function 
     // - throw an error if there was one,
     // - do nothing if there was no error
-    @objc func displayResultWithTicket(ticket: GTLServiceTicket,
-                                        finishedWithObject object : GTLObject,
-                                                           error : NSError?) {
+    @objc func requestCompleted(ticket: GTLServiceTicket,
+                                finishedWithObject object : GTLObject,
+                                                   error : NSError?) {
         
         var success = true
         
         if let error = error {
             // The API encountered a problem before the script started executing.
-            print(("The API returned the error: ",
-                      message: error.localizedDescription))
+            Flurry.logEvent(("The API returned the error: \(error.localizedDescription)"))
             success = false
 
          } else if let apiError = object.JSON["error"] as? [String: AnyObject] {
@@ -122,7 +134,7 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
             }
             
             // Set the output as the compiled error message.
-            print(errMessage)
+            Flurry.logEvent(errMessage)
             
             success = false
         } else {

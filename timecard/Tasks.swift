@@ -29,7 +29,8 @@ class Tasks {
     var allNames = [String]()
     
     let persistentStore = NSUserDefaults.standardUserDefaults()
-    let persistentStoreKey = "timecardFinishedTasks"
+    let persistentStoreActiveKey = "timecardActiveTask"
+    let persistentStoreFinishedKey = "timecardFinishedTasks"
     let persistentStoreNamesKey = "timecardAllNames"
     
     //
@@ -37,7 +38,12 @@ class Tasks {
     //
     func viewDidLoad() {
         
-        if let values = persistentStore.objectForKey(persistentStoreKey) {
+        if let value = persistentStore.objectForKey(persistentStoreActiveKey) {
+            let json = value as! String
+            currentlyActiveTask = Task(input: json)
+        }
+    
+        if let values = persistentStore.objectForKey(persistentStoreFinishedKey) {
             let strings = values as! [String]
             for json in strings {
                 let task = Task(input: json)
@@ -48,11 +54,15 @@ class Tasks {
         if let values = persistentStore.objectForKey(persistentStoreNamesKey) {
             allNames = values as! [String]
         }
-        
     }
     
     func taskStarted( task: Task ) {
         currentlyActiveTask = task
+        
+        persistentStore.setObject(nil, forKey: persistentStoreActiveKey)
+        if let json = activeTaskAsJsonString() {
+            persistentStore.setObject(json, forKey: persistentStoreActiveKey)
+        }
     }
     
     func taskCanceled( task: Task ) {
@@ -64,11 +74,13 @@ class Tasks {
         if task != nil {
             task!.endTime = time
             
+            persistentStore.setObject(nil, forKey: persistentStoreActiveKey)
+            
             // Add the newly completed task to the finished array and persistent store
             // (replace the whole persistent array 'cause it's easy)
             finishedTasks.append(task!)
-            persistentStore.setObject(nil, forKey: persistentStoreKey)
-            persistentStore.setObject(finishedTasksAsJsonArray(), forKey: persistentStoreKey)
+            persistentStore.setObject(nil, forKey: persistentStoreFinishedKey)
+            persistentStore.setObject(finishedTasksAsJsonArray(), forKey: persistentStoreFinishedKey)
 
             // Likewise for the allNames array
             allNames.append(task!.desc!)
@@ -173,7 +185,7 @@ class Tasks {
         
         // request outstanding
         if ( reportingTasks.isEmpty == false ) {
-            print("request outstanding; not saving")
+            Flurry.logEvent("request outstanding; not saving")
             return
         }
         
@@ -189,8 +201,8 @@ class Tasks {
         let task = finishedTasks[0]
         if Clock.sameDay(task.startTime, date2: now) == false {
         
-//        if debugCount > 2 { // XXX for debugging
-//            debugCount = 0
+//        if debugCount >= 2 { // XXX for debugging
+            debugCount = 0
         
 //        if true {      // XXX for debugging
         
@@ -219,6 +231,9 @@ class Tasks {
         var paramString:String = String()
         
         if input.count == 0 {return}
+        
+        print( "saving \(input.count)" )
+        Flurry.logEvent( "saving \(input.count)" )
         
         let dateColumn:String = Clock.getDateString(input[0].startTime)
         let (month, year) = Clock.monthYear(input[0].startTime)
@@ -249,11 +264,13 @@ class Tasks {
     
     func saveComplete( succeeded:Bool ) {
         if succeeded {
+            Flurry.logEvent( "save SUCCESS; \(reportingTasks.count) saved" )
             // Move 'em to reported. No need to update persistent storage
             // here because it's a single array containing reportingTasks
             // (by virtue of them having been added to finishedTasks earlier)
             reportedTasks += reportingTasks
         } else {
+            Flurry.logEvent( "save FAIL;  \(reportingTasks.count) to retry")
             // Put 'em back, try again in a second
             insertToFrontOfFinished(reportingTasks)
         }
@@ -307,6 +324,10 @@ class Tasks {
     func getAllNames() -> [String] {
         
         return allNames
+    }
+    
+    func activeTaskAsJsonString() -> String? {
+        return currentlyActiveTask?.jsonString()
     }
     
     func finishedTasksAsJsonArray() -> [String] {
@@ -385,7 +406,7 @@ class Task {
                 self.duration = NSTimeInterval(duration)!
             }
         } catch {
-            print("error serializing JSON \(input): \(error)")
+            Flurry.logEvent("error serializing JSON \(input): \(error)")
         }
     }
     
@@ -409,6 +430,10 @@ class Task {
         request.setJSONValue(duration, forKey: "duration")
         
         return request.JSONString()
+    }
+    
+    func toString() -> String {
+        return "\(desc!) \(Clock.getDateTimeString((startTime)))"
     }
 }
 

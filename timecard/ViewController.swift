@@ -96,9 +96,6 @@
             
             drawBlackBorder(totalTodayView)
             
-//            datePickerView.datePickerMode = UIDatePickerMode.Date
-//            datePickerView.addTarget(self, action: #selector(ViewController.datePickerChanged(_:)), forControlEvents: UIControlEvents.ValueChanged)
-            
             drawBlackBorder(sheetLinkButton)
         }
 
@@ -122,26 +119,6 @@
         
         //=================================================================================================
         
-        
-        //
-        // Start a new task - with AlertAction to enter name
-        //
-//        @IBAction func startTaskOnTouch(sender: UIButton) {
-//            
-//            let menu = UIAlertController(title: nil, message: "Task Description", preferredStyle: UIAlertControllerStyle.Alert)
-//            
-//            menu.addTextFieldWithConfigurationHandler(configurationTextField)
-//            
-//            menu.addAction(UIAlertAction(title: "OK", style: .Default , handler: { (UIAlertAction)in
-//                let date = NSDate()
-//                self.setActiveTaskInModel(date, desc: menu.textFields![0].text)
-//                self.setActiveTaskInView(date)
-//            }))
-//            self.presentViewController(menu, animated: true, completion: nil)
-//        }
-//        func configurationTextField(textField: UITextField!) {
-//            textField.text = ""
-//        }
         
         //
         // User has pressed the Start button. The system creates a segue to the StartViewController
@@ -198,8 +175,6 @@
             
             startButton.hidden = true
             stopButton.hidden = false
-            
-//            drawBlackBorder(activeTaskView)
         }
         
         func setActiveTaskInModel(date:NSDate, desc:String?) {
@@ -221,7 +196,7 @@
                 tasks.currentlyActiveTask!.updateTime( newTime )
                 activeTaskTableView.reloadData()
             }
-//            updateTotal(datePickerView)
+
             totalTodayDurationLabel.text = tasks.totalDurationIntervalAsString(Clock.dayStart(NSDate()),end: Clock.dayEnd(NSDate()))
             
             // If this is the first run of a day, there is bookkeeping to do..
@@ -309,14 +284,14 @@
         }
         
         // Helper for showing an alert
-//        func showAlert(title : String, message: String) {
-//            let alert = UIAlertView(
-//                title: title,
-//                message: message,
-//                delegate: nil,
-//                cancelButtonTitle: "OK"
-//            )
-//            alert.show()
-//        }
+        func showAlert(title : String, message: String) {
+            let alert = UIAlertView(
+                title: title,
+                message: message,
+                delegate: nil,
+                cancelButtonTitle: "OK"
+            )
+            alert.show()
+        }
     }
     
