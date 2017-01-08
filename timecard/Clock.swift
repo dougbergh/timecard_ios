@@ -9,12 +9,12 @@
 import Foundation
 
 protocol ClockDelegate {
-    func updateTime( newTime: NSDate )
+    func updateTime( _ newTime: Date )
 }
 
 class Clock {
     
-    var timer = NSTimer()
+    var timer = Timer()
     
     let delegate: ClockDelegate!
     
@@ -22,7 +22,7 @@ class Clock {
         
         delegate = clockDelegate
         
-        self.timer = NSTimer.scheduledTimerWithTimeInterval(1.0,
+        self.timer = Timer.scheduledTimer(timeInterval: 1.0,
             target: self,
             selector: #selector(Clock.tick),
             userInfo: nil,
@@ -30,7 +30,7 @@ class Clock {
     }
     
     @objc func tick() {
-        delegate.updateTime( NSDate() )
+        delegate.updateTime( Date() )
     }
     
     func stop() {
@@ -43,25 +43,25 @@ extension Clock {
     //
     // Return the full date & time as a string (suitable for saving in persistent store)
     //
-    static func getDateTimeString(date:NSDate?) -> String {
+    static func getDateTimeString(_ date:Date?) -> String {
         if date == nil { return "" }
-        return NSDateFormatter.localizedStringFromDate(date!, dateStyle: .ShortStyle, timeStyle: .MediumStyle)
+        return DateFormatter.localizedString(from: date!, dateStyle: .short, timeStyle: .medium)
     }
 
     //
     // Return just the date as a string (suitable for specifying sheets filename)
     //
-    static func getDateString(date:NSDate?) -> String {
+    static func getDateString(_ date:Date?) -> String {
         if date == nil { return "" }
-        return NSDateFormatter.localizedStringFromDate(date!, dateStyle: .ShortStyle, timeStyle: .NoStyle)
+        return DateFormatter.localizedString(from: date!, dateStyle: .short, timeStyle: .none)
     }
     
     //
     // Return just the time (without the date) as a string (suitable for displaying on the UI)
     //
-    static func getTimeString(date:NSDate?) -> String {
+    static func getTimeString(_ date:Date?) -> String {
         if date == nil { return "" }
-        return NSDateFormatter.localizedStringFromDate(date!, dateStyle: .NoStyle, timeStyle: .ShortStyle)
+        return DateFormatter.localizedString(from: date!, dateStyle: .none, timeStyle: .medium)
     }
     // This is the 'correct' way to do this, but I can't make it work
 //    static func getDurationString(start:NSDate, stop:NSDate) -> String? {
@@ -83,19 +83,20 @@ extension Clock {
     // Return an NSDate given the input. Assumes the input was created with the 
     // getDateString() function above, which uses dateStyle.ShortStyle and timeStyle.MediumStyle
     //
-    static func dateFromString(input:String) -> NSDate {
-        let fmt = NSDateFormatter()
-        fmt.dateStyle = .ShortStyle
-        fmt.timeStyle = .MediumStyle
-        return fmt.dateFromString(input)!
+    static func dateFromString(_ input:String) -> Date {
+        let fmt = DateFormatter()
+        fmt.locale = Locale(identifier: "en_US")
+        fmt.dateStyle = .short
+        fmt.timeStyle = .medium
+        return fmt.date(from: input)!
     }
     
-    static func getDurationString(start:NSDate, stop:NSDate) -> String {
-        let interval = stop.timeIntervalSinceDate(start)
+    static func getDurationString(_ start:Date, stop:Date) -> String {
+        let interval = stop.timeIntervalSince(start)
         return getDurationString(interval)
     }
     
-    static func getDurationString(interval:NSTimeInterval) -> String {
+    static func getDurationString(_ interval:TimeInterval) -> String {
         let (d,h,m,s) = durationsFromSeconds(seconds: interval)
         var retVal = ""
         if d > 0 { retVal += "\(d)d " }
@@ -105,11 +106,11 @@ extension Clock {
         return retVal
     }
     
-    static func durationsFromSeconds(seconds s: NSTimeInterval) -> (days:Int,hours:Int,minutes:Int,seconds:Int) {
-        return (Int(s / (24 * 3600.0)),Int((s % (24 * 3600.0)) / 3600.0),Int(s % 3600 / 60.0),Int(s % 60.0))
+    static func durationsFromSeconds(seconds s: TimeInterval) -> (days:Int,hours:Int,minutes:Int,seconds:Int) {
+        return (Int(s / (24 * 3600.0)),Int((s.truncatingRemainder(dividingBy: (24 * 3600.0))) / 3600.0),Int(s.truncatingRemainder(dividingBy: 3600) / 60.0),Int(s.truncatingRemainder(dividingBy: 60.0)))
     }
     
-    static func durationAsDecimal( seconds interval: NSTimeInterval ) -> Float {
+    static func durationAsDecimal( seconds interval: TimeInterval ) -> Float {
         var (_,h,m,s) = durationsFromSeconds(seconds: interval)
         
         m += ( s>=30 ? 1 : 0)
@@ -124,17 +125,17 @@ extension Clock {
     //
     // Return an NSDate that represents the first instant of today
     //
-    static func dayStart( date:NSDate ) -> NSDate {
+    static func dayStart( _ date:Date ) -> Date {
         
-        let cal = NSCalendar.currentCalendar()
+        let cal = Calendar.current
         
-        let components = cal.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: date)
+        var components = (cal as NSCalendar).components([.year, .month, .day, .hour, .minute, .second, .nanosecond], from: date)
         
         components.hour = 0
         components.minute = 0
         components.second = 0
 
-        let updated = NSCalendar.currentCalendar().dateFromComponents(components)
+        let updated = Calendar.current.date(from: components)
         
         return updated!
     }
@@ -142,17 +143,17 @@ extension Clock {
     //
     // Return an NSDate that represents the last instant of today
     //
-    static func dayEnd( date:NSDate ) -> NSDate {
+    static func dayEnd( _ date:Date ) -> Date {
         
-        let cal = NSCalendar.currentCalendar()
+        let cal = Calendar.current
         
-        let components = cal.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: date)
+        var components = (cal as NSCalendar).components([.year, .month, .day, .hour, .minute, .second, .nanosecond], from: date)
         
         components.hour = 23
         components.minute = 59
         components.second = 59
         
-        let updated = NSCalendar.currentCalendar().dateFromComponents(components)
+        let updated = Calendar.current.date(from: components)
         
         return updated!
     }
@@ -160,55 +161,55 @@ extension Clock {
     //
     // Return an NSDate that represents the first instant of this year
     //
-    static func thisYear( date:NSDate ) -> NSDate {
+    static func thisYear( _ date:Date ) -> Date {
         
-        let cal = NSCalendar.currentCalendar()
+        let cal = Calendar.current
         
-        let argComponents = cal.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: date)
-        let nowComponents = cal.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: NSDate())
+        var argComponents = (cal as NSCalendar).components([.year, .month, .day, .hour, .minute, .second, .nanosecond], from: date)
+        let nowComponents = (cal as NSCalendar).components([.year, .month, .day, .hour, .minute, .second, .nanosecond], from: Date())
         
         argComponents.year = nowComponents.year
         
-        let updated = NSCalendar.currentCalendar().dateFromComponents(argComponents)
+        let updated = Calendar.current.date(from: argComponents)
         
         return updated!
     }
     
-    static func sameDay( date1:NSDate, date2:NSDate ) -> Bool {
-        let cal = NSCalendar.currentCalendar()
-        let components1 = cal.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: date1)
-        let components2 = cal.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: date2)
+    static func sameDay( _ date1:Date, date2:Date ) -> Bool {
+        let cal = Calendar.current
+        let components1 = (cal as NSCalendar).components([.year, .month, .day, .hour, .minute, .second, .nanosecond], from: date1)
+        let components2 = (cal as NSCalendar).components([.year, .month, .day, .hour, .minute, .second, .nanosecond], from: date2)
 
         return components1.day == components2.day
     }
     
-    static func sameMinute( date1:NSDate, date2:NSDate ) -> Bool {
-        let cal = NSCalendar.currentCalendar()
-        let components1 = cal.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: date1)
-        let components2 = cal.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: date2)
+    static func sameMinute( _ date1:Date, date2:Date ) -> Bool {
+        let cal = Calendar.current
+        let components1 = (cal as NSCalendar).components([.year, .month, .day, .hour, .minute, .second, .nanosecond], from: date1)
+        let components2 = (cal as NSCalendar).components([.year, .month, .day, .hour, .minute, .second, .nanosecond], from: date2)
         
         return components1.minute == components2.minute
     }
     
-    static func moreThanOneDayOld( date1:NSDate, date2:NSDate ) -> Bool {
+    static func moreThanOneDayOld( _ date1:Date, date2:Date ) -> Bool {
         
-        let oneDay : NSTimeInterval = 60*60*24
+        let oneDay : TimeInterval = 60*60*24
 
-        let diff = date2.timeIntervalSinceDate(date1)
+        let diff = date2.timeIntervalSince(date1)
         
         return diff > oneDay
     }
     
-    static func dayEndYesterday( date:NSDate ) -> NSDate {
-        let yesterday = date.dateByAddingTimeInterval(-60*60*24)
+    static func dayEndYesterday( _ date:Date ) -> Date {
+        let yesterday = date.addingTimeInterval(-60*60*24)
         return dayEnd(yesterday)
     }
     
-    static func monthYear(date:NSDate) -> (String,String) {
-        let fmt = NSDateFormatter()
-        fmt.dateStyle = NSDateFormatterStyle.LongStyle
-        let dateString = fmt.stringFromDate(date)
-        let dateArray = dateString.characters.split(" ")
+    static func monthYear(_ date:Date) -> (String,String) {
+        let fmt = DateFormatter()
+        fmt.dateStyle = DateFormatter.Style.long
+        let dateString = fmt.string(from: date)
+        let dateArray = dateString.characters.split(separator: " ")
         let month = String(dateArray[0])
         let year = String(dateArray[2])
         

@@ -31,47 +31,47 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
         
         choicesTableView.delegate = self
         choicesTableView.dataSource = self
-        choicesTableView.scrollEnabled = true
+        choicesTableView.isScrollEnabled = true
         choicesTableView.rowHeight = 24
-        choicesTableView.hidden = false     // cause all names to appear before the user types anything
+        choicesTableView.isHidden = false     // cause all names to appear before the user types anything
         
-        allNames = allNames.sort{ $0 < $1 }
+        allNames = allNames.sorted{ $0 < $1 }
         autocompleteNames = allNames
         choicesTableView.reloadData()
 
-        textField.autocorrectionType = .No
+        textField.autocorrectionType = .no
         textField.becomeFirstResponder()
     }
     
-    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool
     {
-        choicesTableView.hidden = false
-        let substring = (textField.text! as NSString).stringByReplacingCharactersInRange(range, withString: string)
+        choicesTableView.isHidden = false
+        let substring = (textField.text! as NSString).replacingCharacters(in: range, with: string)
         
         searchAutocompleteEntriesWithSubstring(substring)
         return true
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
     
-    func textFieldDidEndEditing(textField: UITextField)
+    func textFieldDidEndEditing(_ textField: UITextField)
     {
         delegate!.confirmStartTask(textField.text!)
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
-    func searchAutocompleteEntriesWithSubstring(substring: String)
+    func searchAutocompleteEntriesWithSubstring(_ substring: String)
     {
-        autocompleteNames.removeAll(keepCapacity: false)
+        autocompleteNames.removeAll(keepingCapacity: false)
         
         for curString in allNames
         {
             let myString:NSString! = curString as NSString
             
-            let substringRange :NSRange! = myString.rangeOfString(substring)
+            let substringRange :NSRange! = myString.range(of: substring)
             
             if (substringRange.location  == 0 || substring.isEmpty == true)
             {
@@ -86,30 +86,30 @@ class StartViewController: UIViewController, UITextFieldDelegate, UITableViewDel
         super.didReceiveMemoryWarning()
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return autocompleteNames.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let index = indexPath.row as Int
         let cellIdentifier = "AutoCompleteRowIdentifier"
-        let cell = UITableViewCell(style: UITableViewCellStyle.Default , reuseIdentifier: cellIdentifier)
+        let cell = UITableViewCell(style: UITableViewCellStyle.default , reuseIdentifier: cellIdentifier)
         
         cell.textLabel!.text = autocompleteNames[index]
         return cell
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let selectedCell : UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedCell : UITableViewCell = tableView.cellForRow(at: indexPath)!
         textField.text = selectedCell.textLabel!.text
     }
     
-    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.Delete {
-            let deleted = autocompleteNames.removeAtIndex(indexPath.row)
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == UITableViewCellEditingStyle.delete {
+            let deleted = autocompleteNames.remove(at: indexPath.row)
             delegate!.deleteNameFromAllNames(deleted)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+            tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.automatic)
         }
     }
 }

@@ -14,7 +14,7 @@ class Tasks {
     
     var debugCount = 0
     
-    func setSheetService(svc:SheetServiceProtocol) {
+    func setSheetService(_ svc:SheetServiceProtocol) {
         sheetService = svc
         
         // make sure we get saveComplete
@@ -28,7 +28,6 @@ class Tasks {
     var reportedTasks = [Task]()    // Tasks that have been finished and reported
     var allNames = [String]()
     
-    let persistentStore = NSUserDefaults.standardUserDefaults()
     let persistentStoreActiveKey = "timecardActiveTask"
     let persistentStoreFinishedKey = "timecardFinishedTasks"
     let persistentStoreNamesKey = "timecardAllNames"
@@ -38,12 +37,12 @@ class Tasks {
     //
     func viewDidLoad() {
         
-        if let value = persistentStore.objectForKey(persistentStoreActiveKey) {
+        if let value = UserDefaults.standard.value(forKey: persistentStoreActiveKey) {
             let json = value as! String
             currentlyActiveTask = Task(input: json)
         }
     
-        if let values = persistentStore.objectForKey(persistentStoreFinishedKey) {
+        if let values = UserDefaults.standard.value(forKey: persistentStoreFinishedKey) {
             let strings = values as! [String]
             for json in strings {
                 let task = Task(input: json)
@@ -51,42 +50,42 @@ class Tasks {
             }
         }
         
-        if let values = persistentStore.objectForKey(persistentStoreNamesKey) {
+        if let values = UserDefaults.standard.value(forKey: persistentStoreNamesKey) {
             allNames = values as! [String]
         }
     }
     
-    func taskStarted( task: Task ) {
+    func taskStarted( _ task: Task ) {
         currentlyActiveTask = task
         
-        persistentStore.setObject(nil, forKey: persistentStoreActiveKey)
+        UserDefaults.standard.setValue(nil, forKey: persistentStoreActiveKey)
         if let json = activeTaskAsJsonString() {
-            persistentStore.setObject(json, forKey: persistentStoreActiveKey)
+            UserDefaults.standard.setValue(json, forKey: persistentStoreActiveKey)
         }
     }
     
-    func taskCanceled( task: Task ) {
+    func taskCanceled( _ task: Task ) {
         currentlyActiveTask  = nil
     }
     
-    func taskEnded( time: NSDate ) {
+    func taskEnded( _ time: Date ) {
         let task = currentlyActiveTask
         if task != nil {
             task!.endTime = time
             
-            persistentStore.setObject(nil, forKey: persistentStoreActiveKey)
+            UserDefaults.standard.setValue(nil, forKey: persistentStoreActiveKey)
             
             // Add the newly completed task to the finished array and persistent store
             // (replace the whole persistent array 'cause it's easy)
             finishedTasks.append(task!)
-            persistentStore.setObject(nil, forKey: persistentStoreFinishedKey)
-            persistentStore.setObject(finishedTasksAsJsonArray(), forKey: persistentStoreFinishedKey)
+            UserDefaults.standard.setValue(nil, forKey: persistentStoreFinishedKey)
+            UserDefaults.standard.setValue(finishedTasksAsJsonArray(), forKey: persistentStoreFinishedKey)
 
             // Likewise for the allNames array
             allNames.append(task!.desc!)
             allNames = dedup(allNames)
-            persistentStore.setObject(nil, forKey: persistentStoreNamesKey)
-            persistentStore.setObject(allNames, forKey: persistentStoreNamesKey)
+            UserDefaults.standard.setValue(nil, forKey: persistentStoreNamesKey)
+            UserDefaults.standard.setValue(allNames, forKey: persistentStoreNamesKey)
 
             currentlyActiveTask = nil
             
@@ -97,10 +96,10 @@ class Tasks {
     //
     // Return an array of all tasks in the source array during the interval bounded by start & end
     //
-    func getTasksInInterval(source:[Task],start:NSDate,end:NSDate) -> [Task] {
+    func getTasksInInterval(_ source:[Task],start:Date,end:Date) -> [Task] {
         var ret = [Task]()
         for task in source {
-            if task.startTime.timeIntervalSinceDate(start) >= 0 && end.timeIntervalSinceDate(task.startTime) > 0 {
+            if task.startTime.timeIntervalSince(start) >= 0 && end.timeIntervalSince(task.startTime) > 0 {
                 ret.append(task)
             }
         }
@@ -112,13 +111,13 @@ class Tasks {
     // (note: in swift, parameters are immutable so we can't pass the array
     // from which to remove the tasks as a parameter)
     //
-    func removeTasksInInterval( start:NSDate, end:NSDate ) -> [Task] {
+    func removeTasksInInterval( _ start:Date, end:Date ) -> [Task] {
         
         var ret:[Task] = [Task]()
         
         while finishedTasks.isEmpty == false {
             let task = finishedTasks[0]
-            if task.startTime.timeIntervalSinceDate(start) >= 0 && task.startTime.timeIntervalSinceDate(end) < 0 {
+            if task.startTime.timeIntervalSince(start) >= 0 && task.startTime.timeIntervalSince(end) < 0 {
                 ret.append(finishedTasks.removeFirst())
             } else { break }    // tasks are in chronological order, so we can break out when we find one
         }
@@ -126,7 +125,7 @@ class Tasks {
         return ret
     }
     
-    func insertToFrontOfFinished(tasksToInsert:[Task]) {
+    func insertToFrontOfFinished(_ tasksToInsert:[Task]) {
         let temp = finishedTasks
         finishedTasks.removeAll()
         finishedTasks += tasksToInsert
@@ -136,9 +135,9 @@ class Tasks {
     //
     // Return the total amount of time in all tasks, independent of state
     //
-    func totalDurationInterval(start:NSDate,end:NSDate) -> NSTimeInterval {
+    func totalDurationInterval(_ start:Date,end:Date) -> TimeInterval {
 
-        var total: NSTimeInterval = 0
+        var total: TimeInterval = 0
 
         var tasks = getTasksInInterval(reportingTasks,start: start,end: end)
         for task in tasks {
@@ -151,24 +150,24 @@ class Tasks {
         }
 
         if currentlyActiveTask != nil &&
-            currentlyActiveTask!.startTime.timeIntervalSinceDate(start) > 0 &&
-            end.timeIntervalSinceDate(currentlyActiveTask!.startTime) > 0 {
+            currentlyActiveTask!.startTime.timeIntervalSince(start) > 0 &&
+            end.timeIntervalSince(currentlyActiveTask!.startTime) > 0 {
             total += currentlyActiveTask!.duration
         }
 
         return total
     }
     
-    func totalDurationToday() -> NSTimeInterval {
-        let start = Clock.dayStart(NSDate())
-        return totalDurationInterval(start, end: NSDate())
+    func totalDurationToday() -> TimeInterval {
+        let start = Clock.dayStart(Date())
+        return totalDurationInterval(start, end: Date())
     }
     
     func totalDurationTodayAsString() -> String? {
         return Clock.getDurationString(totalDurationToday())
     }
 
-    func totalDurationIntervalAsString(start:NSDate,end:NSDate) -> String? {
+    func totalDurationIntervalAsString(_ start:Date,end:Date) -> String? {
         return Clock.getDurationString(totalDurationInterval(start,end: end))
     }
     
@@ -190,7 +189,7 @@ class Tasks {
             return
         }
         
-        let now = NSDate()
+        let now = Date()
         
         // check for task left on overnight
         if currentlyActiveTask != nil && !Clock.sameDay(now,date2: (currentlyActiveTask?.startTime)!) {
@@ -225,9 +224,9 @@ class Tasks {
     //
     // If there are tasks to save, save them and the day summary
     //
-    func saveTasks(input:[Task]) {
+    func saveTasks(_ input:[Task]) {
         
-        var total: NSTimeInterval = 0
+        var total: TimeInterval = 0
         var taskNamesArray = [String]()
         var paramString:String = String()
         
@@ -255,7 +254,7 @@ class Tasks {
         sheetService.save("\(month) \(year) tasks", params: paramString)
         
         // save day's summary
-        let taskNames = taskNamesArray.joinWithSeparator(",")
+        let taskNames = taskNamesArray.joined(separator: ",")
         let decimal = round(Clock.durationAsDecimal(seconds: total) * 100) / 100
         sheetService.saveTotal("\(month) \(year)",
                                date: dateColumn,
@@ -263,7 +262,7 @@ class Tasks {
                                taskNames: taskNames)
     }
     
-    func saveComplete( succeeded:Bool, error:String? ) {
+    func saveComplete( _ succeeded:Bool, error:String? ) {
         if succeeded {
             print( "save SUCCESS; \(reportingTasks.count) saved" )
             Flurry.logEvent( "save SUCCESS; \(reportingTasks.count) saved" )
@@ -283,7 +282,7 @@ class Tasks {
         reportingTasks.removeAll()
     }
     
-    func consolidate(tasks:[Task]) -> [ConsolidatedTask] {
+    func consolidate(_ tasks:[Task]) -> [ConsolidatedTask] {
         var retVal = [ConsolidatedTask]()
         var dup = false
         for task in tasks {
@@ -303,7 +302,7 @@ class Tasks {
         return retVal
     }
 
-    func dedup(tasks:[String]) -> [String] {
+    func dedup(_ tasks:[String]) -> [String] {
         var retVal = [String]()
         var dup = false
         for task in tasks {
@@ -345,12 +344,12 @@ class Tasks {
         return ret
     }
     
-    func deleteNameFromAllNames( deleted:String ) {
-        if let index = allNames.indexOf( deleted ) {
-            allNames.removeAtIndex(index)
+    func deleteNameFromAllNames( _ deleted:String ) {
+        if let index = allNames.index( of: deleted ) {
+            allNames.remove(at: index)
         }
-        persistentStore.setObject(nil, forKey: persistentStoreNamesKey)
-        persistentStore.setObject(allNames, forKey: persistentStoreNamesKey)
+        UserDefaults.standard.setValue(nil, forKey: persistentStoreNamesKey)
+        UserDefaults.standard.setValue(allNames, forKey: persistentStoreNamesKey)
     }
 }
 
@@ -361,28 +360,28 @@ class Task {
         case readingObservations
     }
     
-    var startTime: NSDate!
-    var endTime: NSDate?
+    var startTime: Date!
+    var endTime: Date?
     var cat: Category?
     var desc: String?
-    var duration: NSTimeInterval {
+    var duration: TimeInterval {
         set {
         }
         get {
             if endTime != nil {
-                return round(endTime!.timeIntervalSinceDate(startTime))
+                return round(endTime!.timeIntervalSince(startTime))
             } else {
-                return round(NSDate().timeIntervalSinceDate(startTime))
+                return round(Date().timeIntervalSince(startTime))
             }
         }
     }
     
     // Initializer used when only start time is known
-    init( start: NSDate ) {
+    init( start: Date ) {
         startTime = start
     }
     
-    init( start: NSDate, description:String? ) {
+    init( start: Date, description:String? ) {
         startTime = start
         if description != nil {
             self.desc = description
@@ -392,10 +391,10 @@ class Task {
     init( input:String ) {
         // motherfucker: can't run SwiftyJSON and GTL together.
         
-        let encodedInput = input.dataUsingEncoding(NSUTF8StringEncoding)! as NSData
+        let encodedInput = input.data(using: String.Encoding.utf8)! as Data
         
         do {
-            let json = try NSJSONSerialization.JSONObjectWithData(encodedInput, options: .AllowFragments)
+            let json = try JSONSerialization.jsonObject(with: encodedInput, options: .allowFragments) as! [String:Any]
             
             if let startTime = json["startTime"] as? String {
                 self.startTime = Clock.dateFromString( startTime )
@@ -409,18 +408,18 @@ class Task {
                 self.desc = desc
             }
             if let duration = json["duration"] as? String {
-                self.duration = NSTimeInterval(duration)!
+                self.duration = TimeInterval(duration)!
             }
         } catch {
             Flurry.logEvent("error serializing JSON \(input): \(error)")
         }
     }
     
-    func updateTime(now:NSDate) {
-        duration = now.timeIntervalSinceDate(startTime)
+    func updateTime(_ now:Date) {
+        duration = now.timeIntervalSince(startTime)
     }
     
-    func durationAsString(stop:NSDate) -> String? {
+    func durationAsString(_ stop:Date) -> String? {
         if endTime != nil {
             return Clock.getDurationString(startTime, stop: endTime!)
         } else {
@@ -435,7 +434,7 @@ class Task {
         request.setJSONValue(desc, forKey: "desc")
         request.setJSONValue(duration, forKey: "duration")
         
-        return request.JSONString()
+        return request.jsonString()
     }
     
     func toString() -> String {
@@ -445,7 +444,7 @@ class Task {
 
 class ConsolidatedTask {
     var desc:String!
-    var duration: NSTimeInterval = 0.0
+    var duration: TimeInterval = 0.0
     
     init( desc: String ) {
         self.desc = desc

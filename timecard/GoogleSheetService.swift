@@ -9,9 +9,9 @@
 import Foundation
 
 protocol SheetServiceProtocol {
-    func saveTotal(fileName:String,date:String,total:String,taskNames:String)
-    func save(fileName:String,params:String)
-    func setTasksDelegate( delegate:Tasks )
+    func saveTotal(_ fileName:String,date:String,total:String,taskNames:String)
+    func save(_ fileName:String,params:String)
+    func setTasksDelegate( _ delegate:Tasks )
 }
 
 class GoogleSheetService : NSObject, SheetServiceProtocol {
@@ -19,13 +19,13 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
     // backend spreadsheet
     // Google Sheets implementation
     
-    private let kKeychainItemName = "Google Apps Script Execution API"
-    private let kClientID = "970084832900-q2tn9dfqfv31l93ehfj0vbkvmpteibf9.apps.googleusercontent.com"
-    private let kScriptId = "MYk98rtcC6ioYF8bKxS5alPnnEaOUkRCL"
+    fileprivate let kKeychainItemName = "Google Apps Script Execution API"
+    fileprivate let kClientID = "970084832900-q2tn9dfqfv31l93ehfj0vbkvmpteibf9.apps.googleusercontent.com"
+    fileprivate let kScriptId = "MYk98rtcC6ioYF8bKxS5alPnnEaOUkRCL"
     
     // If modifying these scopes, delete your previously saved credentials by
     // resetting the iOS simulator or uninstall the app.
-    private let scopes = ["https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/spreadsheets"]
+    fileprivate let scopes = ["https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/spreadsheets"]
     let service = GTLService()
     
     var tasksDelegate: Tasks?
@@ -33,21 +33,21 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
     // When the parent view loads, initialize the Google Apps Script Execution API service
     func viewDidLoad() {
         
-        let userDefaults = NSUserDefaults.standardUserDefaults()
+        let userDefaults = UserDefaults.standard
         
-        if userDefaults.boolForKey("hasRunBefore") == false {
+        if userDefaults.bool(forKey: "hasRunBefore") == false {
             
             // remove keychain items here XXX recover from changing Google password by deleting when re-installing.
             // XXX do the better thing too: re-login after getting an error
             
             
             // update the flag indicator
-            userDefaults.setBool(true, forKey: "hasRunBefore")
+            userDefaults.set(true, forKey: "hasRunBefore")
             userDefaults.synchronize() // forces the app to update the NSUserDefaults
         }
         
-        if let auth = GTMOAuth2ViewControllerTouch.authForGoogleFromKeychainForName(
-            kKeychainItemName,
+        if let auth = GTMOAuth2ViewControllerTouch.authForGoogleFromKeychain(
+            forName: kKeychainItemName,
             clientID: kClientID,
             clientSecret: nil) {
             service.authorizer = auth
@@ -59,14 +59,14 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
     func canAuth() -> Bool {
         
         if let authorizer = service.authorizer,
-            canAuth = authorizer.canAuthorize where canAuth {
+            let canAuth = authorizer.canAuthorize, canAuth {
             return true
         } else {
             return false
         }
     }
     
-    func setTasksDelegate( delegate:Tasks ) {
+    func setTasksDelegate( _ delegate:Tasks ) {
         tasksDelegate = delegate
     }
     
@@ -74,15 +74,15 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
     
     // Google API
     
-    func saveTotal(fileName:String,date:String,total:String,taskNames:String) {
+    func saveTotal(_ fileName:String,date:String,total:String,taskNames:String) {
         
         save(fileName,params: "\(date)|\(total)|\(taskNames)")
     }
     
-    func save(fileName:String,params:String) {
+    func save(_ fileName:String,params:String) {
     
         let baseUrl = "https://script.googleapis.com/v1/scripts/\(kScriptId):run"
-        let url = GTLUtilities.URLWithString(baseUrl, queryParameters: nil)
+        let url = GTLUtilities.url(with: baseUrl, queryParameters: nil)
         
         // Create an execution request object.
         let request = GTLObject()
@@ -90,16 +90,16 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
         request.setJSONValue("\(fileName)|\(params)", forKey: "parameters")
         
         // Make the API request.
-        service.fetchObjectByInsertingObject(request,
-                                             forURL: url,
+        service.fetchObject(byInserting: request,
+                                             for: url,
                                              delegate: self,
-                                             didFinishSelector: #selector(self.requestCompleted(_:finishedWithObject:error:)))
+                                             didFinish: #selector(self.requestCompleted(_:finishedWithObject:error:)))
     }
     
     // Handle the result returned by the Apps Script function 
     // - throw an error if there was one,
     // - do nothing if there was no error
-    @objc func requestCompleted(ticket: GTLServiceTicket,
+    @objc func requestCompleted(_ ticket: GTLServiceTicket,
                                 finishedWithObject object : GTLObject,
                                                    error : NSError?) {
         
@@ -112,7 +112,7 @@ class GoogleSheetService : NSObject, SheetServiceProtocol {
             
             tasksDelegate?.saveComplete(false,error: event)
             
-         } else if let apiError = object.JSON["error"] as? [String: AnyObject] {
+         } else if let apiError = object.json["error"] as? [String: AnyObject] {
             // The API executed, but the script returned an error.
             
             // Extract the first (and only) set of error details and cast as
